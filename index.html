@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharkie</title>
+    <link rel="shortcut icon" href="./img/assets/sharkie/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="./style/style.css">
+    <link rel="stylesheet" href="./style/scrollbar.css">
+</head>
+
+<body>
+    <img id="player" src="./img/assets/sharkie/player.png" alt="">
+    <img id="bubble" src="./img/assets/sharkie/bubble.png" alt="">
+
+    <img id="pufferfish_green" src="./img/assets/enemies/pufferfish_green.png" alt="">
+    <img id="pufferfish_orange" src="./img/assets/enemies/pufferfish_orange.png" alt="">
+    <img id="pufferfish_rose" src="./img/assets/enemies/pufferfish_rose.png" alt="">
+
+    <img id="jellyfish_lila" src="./img/assets/enemies/jellyfish_lila.png" alt="">
+    <img id="jellyfish_yellow" src="./img/assets/enemies/jellyfish_yellow.png" alt="">
+    <img id="jellyfish_pink" src="./img/assets/enemies/jellyfish_pink.png" alt="">
+    <img id="jellyfish_green" src="./img/assets/enemies/jellyfish_green.png" alt="">
+
+    <img id="smoke" src="./img/assets/enemies/boom.png" alt="">
+
+    <img id="endboss" src="./img/assets/enemies/final_boss.png" alt="">
+
+    <img id="layer4" src="img/background/l4.png" alt="">
+    <img id="layer3" src="img/background/l3.png" alt="">
+    <img id="layer2" src="img/background/l2.png" alt="">
+    <img id="layer1" src="img/background/l1.png" alt="">
+    <img id="light" src="img/background/light.png" alt="">
+
+
+    <div id="menu">
+        <div id="mainMenu">
+            <h1>Sharkie</h1>
+            <button id="startBtn">Spiel Starten</button>
+            <div>
+                <button id="soundBtn">Sound: Aus</button>
+                <button id="controlsBtn">Tastenbelegung</button>
+
+            </div>
+            <button id="impressumBtn">Impressum</button>
+
+            <aside id="controls" class="container d-none">
+                <section class="controls">
+                    <img id="closeBtn" src="./img/assets/icons/close.png" alt="close">
+                    <p>
+                        <strong>Bewegen:</strong>
+                        <br>
+                        <br>
+                        <img src="./img/assets/icons/w.png" alt="w">/ 
+                        <img src="./img/assets/icons/a.png" alt="a">/ 
+                        <img src="./img/assets/icons/s.png" alt="s">/ 
+                        <img src="./img/assets/icons/d.png" alt="d">
+                    </p>
+                    <p>
+                        <strong>FinAttack:</strong>
+                        <br>
+                        <br>
+                        <img src="./img/assets/icons/space.png" alt="space">
+                    </p>
+                    <p>
+                        <strong>BubbleAttack:</strong>
+                        <br>
+                        <br>
+                        <img src="./img/assets/icons/e.png" alt="e">
+                    </p>
+                </section>
+            </aside>
+
+            <aside id="impressum" class="container d-none">
+                <section class="impressumContainer">
+                    <img id="closeBtn" src="./img/assets/icons/close.png" alt="close">
+                    <h2>Impressum</h2>
+                    <p>Angaben gemäß § 5 DDG</p>
+                    <p>Max Muster
+                        <br>
+                        Musterweg
+                        <br>
+                        12345 Musterstadt
+                        <br>
+                    </p>
+                    <p>
+                        <strong>Vertreten durch: </strong>
+                        <br>
+                        Max Muster
+                        <br>
+                    </p>
+                    <p>
+                        <strong>Kontakt:</strong>
+                        <br>
+                        Telefon: 01234-789456
+                        <br>
+                        E-Mail: <a href='mailto:max@muster.de'>max@muster.de</a>
+                        <br>
+                    </p>
+                    <p>
+                        <strong>Umsatzsteuer-ID: </strong>
+                        <br>
+                        Umsatzsteuer-Identifikationsnummer gemäß §27a Umsatzsteuergesetz: Musterustid.
+                        <br>
+                        <br>
+                        <strong>Wirtschafts-ID: </strong>
+                        <br>
+                        Musterwirtschaftsid
+                        <br>
+                    </p>
+                    <p>
+                        <strong>Aufsichtsbehörde:</strong>
+                        <br>
+                        Musteraufsicht Musterstadt
+                        <br>
+                    </p>
+                    <br>
+                    Impressum vom <a href="https://www.impressum-generator.de">Impressum Generator</a>
+                    der
+                    <a href="https://www.kanzlei-hasselbach.de/rechtsgebiete/familienrecht/">Kanzlei Hasselbach,
+                        Fachanwälte für Familienrecht</a>
+                </section>
+            </aside>
+
+        </div>
+
+        <div id="gameOverMenu" class="d-none">
+            <button id="backToMenuBtn">Zurück zum Hauptmenü</button>
+        </div>
+    </div>
+
+    <canvas id="canvas" class="d-none"></canvas>
+
+    <script type="module" src="./js/main.js"></script>
+</body>
+
+</html>
