@@ -52,28 +52,23 @@ export class Game {
 
     update(deltaTime) {
         if (!this.gameOver) {
-            if (this.startTime !== null) {
-                this.time = performance.now() - this.startTime;
-            }
+            if (this.startTime !== null) this.time = performance.now() - this.startTime;
                 
             if (this.endboss === null && this.time >= this.endbossInterval) this.spawnEndboss();
     
-            if (!this.endboss) this.background.update();
-    
-            this.player.update(this.input, deltaTime);
-            if (this.player.health <= 0) {
-                this.endGame();
-            }
-    
-            this.bubbles.forEach(bubble => bubble.update());
-            this.bubbles = this.bubbles.filter(bubble => !bubble.markedForDeletion);
-    
             if (!this.endboss) {
+                this.background.update();
                 if (this.enemyTimer > this.enemyInterval) {
                     this.addEnemy();
                     this.enemyTimer = 0;
                 } else this.enemyTimer += deltaTime;
             }
+    
+            this.player.update(this.input, deltaTime);
+            if (this.player.health <= 0) setTimeout(() => this.endGame(), 1250);
+    
+            this.bubbles.forEach(bubble => bubble.update());
+            this.bubbles = this.bubbles.filter(bubble => !bubble.markedForDeletion);
     
             this.enemies.forEach(enemy => {
                 enemy.update(deltaTime);
@@ -85,7 +80,7 @@ export class Game {
     
             if (this.endboss) {
                 this.endboss.update(deltaTime);
-                if (this.endboss.health <= 0) this.endGame();
+                if (this.endboss.health <= 0) setTimeout(() => this.endGame(), 900);
             }
         }
     }
