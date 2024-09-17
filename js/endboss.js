@@ -28,14 +28,16 @@ export class Endboss {
         this.hitboxOffsetY = 110;
         this.hitboxWidth = this.width - 40;
         this.hitboxHeight = this.height - 150;
+        this.invincible = false;
+        this.invincibilityDuration = 1000;
+        this.lastDamageTime = 0;
     }
 
     update(deltaTime) {
         this.updateHitbox();
-        
         this.currentState.handleInput();
 
-        if (this.currentState !== this.states[3] && this.currentState !== this.states[4]) {
+        if (this.currentState !== this.states[3] && this.currentState !== this.states[4] && this.currentState !== this.states[1]) {
             if (this.game.player.x < this.x && this.otherDirection) this.otherDirection = false;
             else if (this.game.player.x > this.x && !this.otherDirection) this.otherDirection = true;
 
@@ -46,11 +48,24 @@ export class Endboss {
             else if (this.game.player.y > this.y) this.y += this.speed;
         }
 
+        if (this.invincible && Date.now() - this.lastDamageTime > this.invincibilityDuration) {
+            this.invincible = false;
+        }
+
         if (this.frameTimer > this.frameInterval) {
             this.frameTimer = 0;
             if (this.frameX < this.maxFrame) this.frameX++;
             else this.frameX = 0;
         } else this.frameTimer += deltaTime;
+    }
+
+    takeDamage() {
+        if (!this.invincible) {
+            this.setStates(4);
+            this.health -= 50;
+            this.invincible = true;
+            this.lastDamageTime = Date.now();
+        }
     }
 
     updateHitbox() {

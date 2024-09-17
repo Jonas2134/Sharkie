@@ -43,8 +43,9 @@ export class Bubble {
                 endboss.y + endboss.hitboxOffsetY < this.y + this.height &&
                 endboss.y + endboss.hitboxOffsetY + endboss.hitboxHeight > this.y
             ) {
-                endboss.health -= 10;
+                endboss.health -= 50;
                 endboss.setStates(4);
+                this.markedForDeletion = true;
             }
         }
     }

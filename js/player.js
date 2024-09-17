@@ -64,23 +64,6 @@ export class Player {
             if (hitboxBottom > this.game.height) this.y = this.game.height - this.hitboxHeight - this.hitboxOffsetY;
         }
 
-        this.attackCooldown = this.attackCooldown || 0;
-        const attackDelay = 500;
-
-        if (this.attackCooldown > 0) {
-            this.attackCooldown -= deltaTime;
-        }
-
-        if (input.getKey("KeyE") && this.attackCooldown <= 0 && this.currentState !== this.states[2]) {
-            this.setStates(2, 1);
-            this.attackCooldown = attackDelay;
-        }
-
-        if (input.getKey("Space") && this.attackCooldown <= 0 && this.currentState !== this.states[3]) {
-            this.setStates(3, 1);
-            this.attackCooldown = attackDelay;
-        }
-
         if (this.frameTimer > this.frameInterval) {
             this.frameTimer = 0;
             if (this.frameX < this.maxFrame) this.frameX++;
@@ -131,15 +114,13 @@ export class Player {
                 endboss.y + endboss.hitboxOffsetY + endboss.hitboxHeight > this.y + this.hitboxOffsetY
             ) {
                 if (this.currentState === this.states[3]) {
-                    endboss.health -= 10;
-                    endboss.setStates(4);
+                    endboss.takeDamage();
                 } else {
-                    const currentTime = Date.now();
                     if (!this.invincible) {
                         this.setStates(4, 0);
                         this.health -= 20;
                         this.invincible = true;
-                        this.lastDamageTime = currentTime;
+                        this.lastDamageTime = Date.now();
 
                         if (this.x < endboss.x) {
                             this.x -= 50;

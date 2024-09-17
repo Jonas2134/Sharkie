@@ -35,7 +35,7 @@ export class Game {
         this.gameOver = false;
         this.endboss = null;
         this.endbossTimer = 0;
-        this.endbossInterval = 60000;
+        this.endbossInterval = 10000;
     }
 
     startGame() {
@@ -80,7 +80,7 @@ export class Game {
     
             if (this.endboss) {
                 this.endboss.update(deltaTime);
-                if (this.endboss.health <= 0) setTimeout(() => this.endGame(), 900);
+                if (this.endboss.health <= 0) setTimeout(() => this.endGame(), 700);
             }
         }
     }
