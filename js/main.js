@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const backToMenuBtn = document.getElementById('backToMenuBtn');
     const gameOverMenu = document.getElementById('gameOverMenu');
     const rotateMessage = document.getElementById('rotateMessage');
+    const controlPanel = document.getElementById('controlPanel');
     const joystick = document.getElementById('joystick');
     const attackButton1 = document.getElementById('attackButton1');
     const attackButton2 = document.getElementById('attackButton2');
@@ -58,6 +59,10 @@ document.addEventListener('DOMContentLoaded', function () {
         game = new Game(canvas.width, canvas.height, soundOn);
         game.startGame();
 
+        if (isMobileDevice()) {
+            controlPanel.classList.remove('d-none');
+        }
+
         if (soundOn) {
             mainMenuSound.pause();
             gameStartSound.play();
@@ -83,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
         mainMenu.classList.remove('d-none');
         canvas.classList.add('d-none');
         game.resetGame();
+        controlPanel.classList.add('d-none');
         if (soundOn) {
             gameSound.pause();
             mainMenuSound.play();
