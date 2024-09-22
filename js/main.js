@@ -32,38 +32,25 @@ document.addEventListener('DOMContentLoaded', function () {
     let soundOn = false;
     let game = null;
 
+    function isMobileDevice() {
+        return /Mobi|Android/i.test(navigator.userAgent);
+    }
+
     function checkOrientation() {
-        if (window.innerHeight > window.innerWidth) {
-            // Hochformat, Hinweis anzeigen
-            rotateMessage.classList.remove('d-none');
-        } else {
-            // Querformat, Hinweis ausblenden
-            rotateMessage.classList.add('d-none');
-            enterFullscreen();
+        if (isMobileDevice()) {
+            if (window.innerHeight > window.innerWidth) {
+                rotateMessage.classList.remove('d-none');
+                canvas.classList.add('d-none');
+            } else {
+                rotateMessage.classList.add('d-none');
+                canvas.classList.remove('d-none');
+            }
         }
     }
 
-    function enterFullscreen() {
-        if (canvas.requestFullscreen) {
-            canvas.requestFullscreen();
-        } else if (canvas.mozRequestFullScreen) { // Firefox
-            canvas.mozRequestFullScreen();
-        } else if (canvas.webkitRequestFullscreen) { // Chrome, Safari, Opera
-            canvas.webkitRequestFullscreen();
-        } else if (canvas.msRequestFullscreen) { // IE/Edge
-            canvas.msRequestFullscreen();
-        }
-    }
-
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-
+    window.addEventListener('DOMContentLoaded', checkOrientation);
     window.addEventListener('resize', checkOrientation);
     window.addEventListener('orientationchange', checkOrientation);
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('DOMContentLoaded', resizeCanvas);
 
     startBtn.addEventListener('click', function () {
         menu.classList.add("d-none");
