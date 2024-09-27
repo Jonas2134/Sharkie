@@ -15,10 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const backToMenuBtn = document.getElementById('backToMenuBtn');
     const gameOverMenu = document.getElementById('gameOverMenu');
     const rotateMessage = document.getElementById('rotateMessage');
-    const controlPanel = document.getElementById('controlPanel');
-    const joystick = document.getElementById('joystick');
-    const attackButton1 = document.getElementById('attackButton1');
-    const attackButton2 = document.getElementById('attackButton2');
 
     const mainMenuSound = new Audio('../audio/mainMenuSound.mp3');
     const gameSound = new Audio('../audio/gameBackground.mp3');
@@ -41,11 +37,21 @@ document.addEventListener('DOMContentLoaded', function () {
         if (isMobileDevice()) {
             if (window.innerHeight > window.innerWidth) {
                 rotateMessage.classList.remove('d-none');
-                canvas.classList.add('d-none');
             } else {
                 rotateMessage.classList.add('d-none');
-                canvas.classList.remove('d-none');
             }
+        }
+    }
+
+    function enterFullscreen() {
+        if (canvas.requestFullscreen) {
+            canvas.requestFullscreen();
+        } else if (canvas.mozRequestFullScreen) { // Firefox
+            canvas.mozRequestFullScreen();
+        } else if (canvas.webkitRequestFullscreen) { // Chrome, Safari, Opera
+            canvas.webkitRequestFullscreen();
+        } else if (canvas.msRequestFullscreen) { // IE/Edge
+            canvas.msRequestFullscreen();
         }
     }
 
@@ -60,7 +66,9 @@ document.addEventListener('DOMContentLoaded', function () {
         game.startGame();
 
         if (isMobileDevice()) {
-            controlPanel.classList.remove('d-none');
+            enterFullscreen();
+            canvas.width = window.innerWidth;
+            //canvas.height = window.innerHeight;
         }
 
         if (soundOn) {
@@ -88,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
         mainMenu.classList.remove('d-none');
         canvas.classList.add('d-none');
         game.resetGame();
-        controlPanel.classList.add('d-none');
         if (soundOn) {
             gameSound.pause();
             mainMenuSound.play();
@@ -125,24 +132,5 @@ document.addEventListener('DOMContentLoaded', function () {
                 controls.classList.add('d-none');
             }
         });
-    });
-
-    joystick.addEventListener('touchmove', function (event) {
-        let touch = event.touches[0];
-        let x = touch.clientX;
-        let y = touch.clientY;
-        // Hier kannst du x und y nutzen, um die Bewegung zu berechnen und den Spieler zu steuern
-        console.log('Joystick bewegt:', x, y);
-    });
-
-    // Attack Buttons
-    attackButton1.addEventListener('touchstart', function () {
-        console.log('Attacke 1 ausgeführt');
-        // Führe Attacke 1 aus
-    });
-
-    attackButton2.addEventListener('touchstart', function () {
-        console.log('Attacke 2 ausgeführt');
-        // Führe Attacke 2 aus
     });
 });
