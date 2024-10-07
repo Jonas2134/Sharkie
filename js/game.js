@@ -35,7 +35,7 @@ export class Game {
         this.gameOver = false;
         this.endboss = null;
         this.endbossTimer = 0;
-        this.endbossInterval = 10000;
+        this.endbossInterval = 60000;
     }
 
     startGame() {

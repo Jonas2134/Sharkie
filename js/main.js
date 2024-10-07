@@ -1,4 +1,6 @@
 import { Game } from "../js/game.js";
+import { Joystick } from "../js/joystick.js";
+import { Button } from "../js/buttons.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const canvas = document.getElementById('canvas');
@@ -29,8 +31,19 @@ document.addEventListener('DOMContentLoaded', function () {
     let soundOn = false;
     let game = null;
 
+    const joystick = new Joystick(100, canvas.height - 100, 50, 25);
+    const attackButton1 = new Button(canvas.width - 120, canvas.height - 100, 80, 50, '#ff0000', 'Attack1');
+    const attackButton2 = new Button(canvas.width - 220, canvas.height - 100, 80, 50, '#00ff00', 'Attack2');
+
     function isMobileDevice() {
         return /Mobi|Android/i.test(navigator.userAgent);
+    }
+
+    function resizeCanvas() {
+        if (isMobileDevice()) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
     }
 
     function checkOrientation() {
@@ -55,9 +68,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    window.addEventListener('DOMContentLoaded', checkOrientation);
-    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('resize', () => {
+        checkOrientation();
+        resizeCanvas();
+    });
+
     window.addEventListener('orientationchange', checkOrientation);
+
+    // Initiale Überprüfung und Größenanpassung
+    checkOrientation();
+    resizeCanvas();
 
     startBtn.addEventListener('click', function () {
         menu.classList.add("d-none");
@@ -65,10 +85,13 @@ document.addEventListener('DOMContentLoaded', function () {
         game = new Game(canvas.width, canvas.height, soundOn);
         game.startGame();
 
+        console.log(game);
+        
+
         if (isMobileDevice()) {
+            // Wenn es ein mobiles Gerät ist, setze die Canvas-Größe und wechsle in den Vollbildmodus
+            resizeCanvas();
             enterFullscreen();
-            canvas.width = window.innerWidth;
-            //canvas.height = window.innerHeight;
         }
 
         if (soundOn) {
@@ -85,6 +108,13 @@ document.addEventListener('DOMContentLoaded', function () {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             game.update(deltaTime);
             game.draw(ctx);
+
+            if (isMobileDevice()) {
+                joystick.update(ctx);
+                attackButton1.update(ctx);
+                attackButton2.update(ctx);                
+            }
+
             if (!game.gameOver) requestAnimationFrame(gameLoop);
         }
 
