@@ -1,11 +1,11 @@
 import { Vector2 } from "../js/vector.js";
 
 export class Button {
-    constructor(x, y, width, height, color, label) {
+    constructor(x, y, radius, color, label) {
         this.pos = new Vector2(x, y);
-        this.width = width;
-        this.height = height;
-        this.color = color;
+        this.radius = radius;
+        this.baseColor = color; // Basisfarbe des Buttons
+        this.color = this.baseColor; // Aktuelle Farbe (initial die Basisfarbe)
         this.label = label;
         this.isPressed = false;
         this.listener();
@@ -16,11 +16,19 @@ export class Button {
     }
 
     draw(ctx) {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.pos.x, this.pos.y, this.width, this.height);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '20px Arial';
-        ctx.fillText(this.label, this.pos.x + 10, this.pos.y + this.height / 2);
+        // Button Farbe basierend auf isPressed
+        ctx.fillStyle = this.isPressed ? this.adjustBrightness(this.baseColor, 1.2) : this.baseColor;
+        ctx.beginPath();
+        ctx.arc(this.pos.x, this.pos.y, this.radius, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+        
+        // Button Label
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; // Label leicht transparent
+        ctx.font = '20px Luckiest Guy';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.label, this.pos.x, this.pos.y);
     }
 
     listener() {
@@ -50,7 +58,18 @@ export class Button {
     }
 
     isInside(x, y) {
-        return x > this.pos.x && x < this.pos.x + this.width &&
-               y > this.pos.y && y < this.pos.y + this.height;
+        // Überprüfung, ob der Punkt innerhalb des Kreises liegt
+        const dist = Math.sqrt((x - this.pos.x) ** 2 + (y - this.pos.y) ** 2);
+        return dist < this.radius;
+    }
+
+    adjustBrightness(color, factor) {
+        // Extrahiere rgba-Werte
+        const rgba = color.match(/\d+/g).map(Number); // Findet alle numerischen Werte in 'rgba'
+        const r = Math.min(255, rgba[0] * factor); // Erhöhe den Rotwert
+        const g = Math.min(255, rgba[1] * factor); // Erhöhe den Grünwert
+        const b = Math.min(255, rgba[2] * factor); // Erhöhe den Blauwert
+        const a = rgba[3] / 255; // Transparenz beibehalten
+        return `rgba(${r}, ${g}, ${b}, ${a})`; // Rückgabe der neuen Farbe
     }
 }

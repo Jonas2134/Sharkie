@@ -19,9 +19,9 @@ export class Joystick {
 
     draw(ctx) {
         // Draw Joystick base
-        this.circle(ctx, this.origin, this.radius, '#707070');
+        this.circle(ctx, this.origin, this.radius, 'rgba(112, 112, 112, 0.9)');
         // Draw Joystick handle
-        this.circle(ctx, this.pos, this.handleRadius, '#3d3d3d');
+        this.circle(ctx, this.pos, this.handleRadius, 'rgba(61, 61, 61, 0.9)');
     }
 
     listener() {

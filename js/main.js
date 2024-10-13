@@ -31,10 +31,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let soundOn = false;
     let game = null;
 
-    const joystick = new Joystick(100, canvas.height - 100, 50, 25);
-    const attackButton1 = new Button(canvas.width - 120, canvas.height - 100, 80, 50, '#ff0000', 'Attack1');
-    const attackButton2 = new Button(canvas.width - 220, canvas.height - 100, 80, 50, '#00ff00', 'Attack2');
-
     function isMobileDevice() {
         return /Mobi|Android/i.test(navigator.userAgent);
     }
@@ -75,9 +71,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.addEventListener('orientationchange', checkOrientation);
 
-    // Initiale Überprüfung und Größenanpassung
     checkOrientation();
     resizeCanvas();
+
+    const joystick = new Joystick(canvas.width * 0.12, canvas.height * 0.82, canvas.width * 0.06, canvas.width * 0.035);
+    const attackButton1 = new Button(canvas.width * 0.9, canvas.height * 0.75, 30, 'rgba(255, 0, 0, 0.9)', 'BA');
+    const attackButton2 = new Button(canvas.width * 0.8, canvas.height * 0.85, 30, 'rgba(0, 255, 0, 0.9)', 'FA');
 
     startBtn.addEventListener('click', function () {
         menu.classList.add("d-none");
@@ -86,10 +85,8 @@ document.addEventListener('DOMContentLoaded', function () {
         game.startGame();
 
         console.log(game);
-        
 
         if (isMobileDevice()) {
-            // Wenn es ein mobiles Gerät ist, setze die Canvas-Größe und wechsle in den Vollbildmodus
             resizeCanvas();
             enterFullscreen();
         }
