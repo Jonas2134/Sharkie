@@ -38,15 +38,15 @@ export class Player {
             this.y += 1;
         } else {
             if (input.getKey("KeyD") && this.currentState !== this.states[4]) {
-                this.x += this.speed;
+                this.x += this.speed * Math.abs(input.getKey("KeyD"));
                 this.otherDirection = false;
             }
             if (input.getKey("KeyA") && this.currentState !== this.states[4]) {
-                this.x -= this.speed;
+                this.x -= this.speed * Math.abs(input.getKey("KeyA"));
                 this.otherDirection = true;
             }
-            if (input.getKey("KeyW") && this.currentState !== this.states[4]) this.y -= this.speed;
-            if (input.getKey("KeyS") && this.currentState !== this.states[4]) this.y += this.speed;
+            if (input.getKey("KeyW") && this.currentState !== this.states[4]) this.y -= this.speed * Math.abs(input.getKey("KeyW"));
+            if (input.getKey("KeyS") && this.currentState !== this.states[4]) this.y += this.speed * Math.abs(input.getKey("KeyS"));
         }
 
         const hitboxRight = this.x + this.hitboxOffsetX + this.hitboxWidth;

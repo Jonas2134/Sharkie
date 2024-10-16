@@ -4,8 +4,7 @@ export class Button {
     constructor(x, y, radius, color, label) {
         this.pos = new Vector2(x, y);
         this.radius = radius;
-        this.baseColor = color; // Basisfarbe des Buttons
-        this.color = this.baseColor; // Aktuelle Farbe (initial die Basisfarbe)
+        this.baseColor = color;
         this.label = label;
         this.isPressed = false;
         this.listener();
@@ -17,14 +16,14 @@ export class Button {
 
     draw(ctx) {
         // Button Farbe basierend auf isPressed
-        ctx.fillStyle = this.isPressed ? this.adjustBrightness(this.baseColor, 1.2) : this.baseColor;
+        ctx.fillStyle = this.isPressed ? this.lightenColor(this.baseColor, 0.2) : this.baseColor;
         ctx.beginPath();
         ctx.arc(this.pos.x, this.pos.y, this.radius, 0, Math.PI * 2);
         ctx.closePath();
         ctx.fill();
         
         // Button Label
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; // Label leicht transparent
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         ctx.font = '20px Luckiest Guy';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -58,18 +57,16 @@ export class Button {
     }
 
     isInside(x, y) {
-        // Überprüfung, ob der Punkt innerhalb des Kreises liegt
         const dist = Math.sqrt((x - this.pos.x) ** 2 + (y - this.pos.y) ** 2);
         return dist < this.radius;
     }
 
-    adjustBrightness(color, factor) {
-        // Extrahiere rgba-Werte
-        const rgba = color.match(/\d+/g).map(Number); // Findet alle numerischen Werte in 'rgba'
-        const r = Math.min(255, rgba[0] * factor); // Erhöhe den Rotwert
-        const g = Math.min(255, rgba[1] * factor); // Erhöhe den Grünwert
-        const b = Math.min(255, rgba[2] * factor); // Erhöhe den Blauwert
-        const a = rgba[3] / 255; // Transparenz beibehalten
-        return `rgba(${r}, ${g}, ${b}, ${a})`; // Rückgabe der neuen Farbe
+    lightenColor(color, amount) {
+        const rgba = color.match(/(\d+\.?\d*)/g).map(Number);
+        const r = Math.min(255, rgba[0] + (255 - rgba[0]) * amount);
+        const g = Math.min(255, rgba[1] + (255 - rgba[1]) * amount);
+        const b = Math.min(255, rgba[2] + (255 - rgba[2]) * amount);
+        const a = rgba[3];
+        return `rgba(${r}, ${g}, ${b}, ${a})`;
     }
 }

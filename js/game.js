@@ -10,6 +10,7 @@ export class Game {
         this.width = width;
         this.height = height;
         this.soundOn = soundOn;
+        this.mobile = false;
         this.resetGame();
         this.player.currentState = this.player.states[0];
         this.player.currentState.enter();
@@ -36,6 +37,11 @@ export class Game {
         this.endboss = null;
         this.endbossTimer = 0;
         this.endbossInterval = 60000;
+    }
+
+    set isMobile(is) {
+        this.input.mobile = is;
+        this.mobile = is;
     }
 
     startGame() {
@@ -138,6 +144,7 @@ export class Game {
         this.enemies.forEach(enemy => enemy.draw(ctx));
         this.smokes.forEach(smoke => smoke.draw(ctx));
         if (this.endboss) this.endboss.draw(ctx);
+        this.input.draw(ctx);
         this.UI.draw(ctx);
     }
 

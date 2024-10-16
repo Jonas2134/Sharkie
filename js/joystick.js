@@ -9,6 +9,7 @@ export class Joystick {
         this.handleFriction = 0.25;
         this.ondrag = false;
         this.touchPos = new Vector2(0, 0);
+        this.inputPos = new Vector2(0, 0);
         this.listener();
     }
 
@@ -68,10 +69,13 @@ export class Joystick {
 
     reposition() {
         if (this.ondrag == false) {
+            this.inputPos = new Vector2(0, 0);
             this.pos = this.pos.add(this.origin.sub(this.pos).mul(this.handleFriction));
         } else {
             const diff = this.touchPos.sub(this.origin);
             const maxDist = Math.min(diff.mag(), this.radius);
+            this.inputPos = diff.clamp(-this.radius, this.radius).div(this.radius);
+            this.inputPos.y = -this.inputPos.y;
             this.pos = this.origin.add(diff.normalize().mul(maxDist));
         }
     }

@@ -1,6 +1,4 @@
 import { Game } from "../js/game.js";
-import { Joystick } from "../js/joystick.js";
-import { Button } from "../js/buttons.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     const canvas = document.getElementById('canvas');
@@ -74,17 +72,11 @@ document.addEventListener('DOMContentLoaded', function () {
     checkOrientation();
     resizeCanvas();
 
-    const joystick = new Joystick(canvas.width * 0.12, canvas.height * 0.82, canvas.width * 0.06, canvas.width * 0.035);
-    const attackButton1 = new Button(canvas.width * 0.9, canvas.height * 0.75, 30, 'rgba(255, 0, 0, 0.9)', 'BA');
-    const attackButton2 = new Button(canvas.width * 0.8, canvas.height * 0.85, 30, 'rgba(0, 255, 0, 0.9)', 'FA');
-
     startBtn.addEventListener('click', function () {
         menu.classList.add("d-none");
         canvas.classList.remove("d-none");
         game = new Game(canvas.width, canvas.height, soundOn);
         game.startGame();
-
-        console.log(game);
 
         if (isMobileDevice()) {
             resizeCanvas();
@@ -103,15 +95,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const deltaTime = timeStamp - lastTime;
             lastTime = timeStamp;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            game.isMobile = isMobileDevice();
             game.update(deltaTime);
             game.draw(ctx);
-
-            if (isMobileDevice()) {
-                joystick.update(ctx);
-                attackButton1.update(ctx);
-                attackButton2.update(ctx);                
-            }
-
             if (!game.gameOver) requestAnimationFrame(gameLoop);
         }
 

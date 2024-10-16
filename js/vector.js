@@ -21,4 +21,10 @@ export class Vector2 {
     normalize() {
         return this.mag() === 0 ? new Vector2(0, 0) : this.div(this.mag());
     }
+    clamp(min, max) {
+        return new Vector2(
+            Math.min(Math.max(this.x, min), max),
+            Math.min(Math.max(this.y, min), max)
+        );
+    }
 }
