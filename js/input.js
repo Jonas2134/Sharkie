@@ -26,12 +26,16 @@ export class InputHandler {
         });
     }
 
+    //TODO: Add E Key and Space for touch
+
     getKey(key) {
         if (this.mobile) {
             this.keys["KeyD"] = false;
             this.keys["KeyA"] = false;
             this.keys["KeyS"] = false;
             this.keys["KeyW"] = false;
+            this.keys["KeyE"] = false;
+            this.keys["Space"] = false;
 
             if (this.joystick.inputPos.x >= this.deadZone) {
                 this.keys["KeyD"] = this.joystick.inputPos.x;
@@ -44,13 +48,20 @@ export class InputHandler {
             } else if (this.joystick.inputPos.y <= -this.deadZone) {
                 this.keys["KeyS"] = this.joystick.inputPos.y;
             }
+
+            if (this.attackButton1.isPressed) {
+                this.keys["KeyE"] = true;
+            }
+            if (this.attackButton2.isPressed) {
+                this.keys["Space"] = true;
+            }
         }
-        
+
         return this.keys[key];
     }
 
     draw(ctx) {
-        if (this.mobile) {            
+        if (this.mobile) {
             this.joystick.update(ctx);
             this.attackButton1.update(ctx);
             this.attackButton2.update(ctx);
