@@ -36,27 +36,46 @@ export class Endboss {
     update(deltaTime) {
         this.updateHitbox();
         this.currentState.handleInput();
-
-        if (this.currentState !== this.states[3] && this.currentState !== this.states[4] && this.currentState !== this.states[1]) {
-            if (this.game.player.x < this.x && this.otherDirection) this.otherDirection = false;
-            else if (this.game.player.x > this.x && !this.otherDirection) this.otherDirection = true;
-
-            if (!this.otherDirection) this.x -= this.speed;
-            else this.x += this.speed;
-
-            if (this.game.player.y < this.y) this.y -= this.speed;
-            else if (this.game.player.y > this.y) this.y += this.speed;
+    
+        if (this.shouldMove()) {
+            this.updateDirection();
+            this.move();
         }
-
+    
+        this.updateInvincibility();
+    
+        this.updateAnimation(deltaTime);
+    }
+    
+    shouldMove() {
+        return this.currentState !== this.states[1] &&
+               this.currentState !== this.states[3] &&
+               this.currentState !== this.states[4];
+    }
+    
+    updateDirection() {
+        if (this.game.player.x + this.game.player.hitboxOffsetX < this.x + this.hitboxOffsetX && this.otherDirection) this.otherDirection = false;
+        else if (this.game.player.x + this.game.player.hitboxOffsetX > this.x + this.hitboxOffsetX && !this.otherDirection) this.otherDirection = true;
+    }
+    
+    move() {
+        this.x += this.otherDirection ? this.speed : -this.speed;
+        this.y += this.game.player.y + this.game.player.hitboxOffsetY > this.y + this.hitboxOffsetY ? this.speed : -this.speed;
+    }
+    
+    updateInvincibility() {
         if (this.invincible && Date.now() - this.lastDamageTime > this.invincibilityDuration) {
             this.invincible = false;
         }
-
+    }
+    
+    updateAnimation(deltaTime) {
         if (this.frameTimer > this.frameInterval) {
             this.frameTimer = 0;
-            if (this.frameX < this.maxFrame) this.frameX++;
-            else this.frameX = 0;
-        } else this.frameTimer += deltaTime;
+            this.frameX = this.frameX < this.maxFrame ? this.frameX + 1 : 0;
+        } else {
+            this.frameTimer += deltaTime;
+        }
     }
 
     takeDamage() {

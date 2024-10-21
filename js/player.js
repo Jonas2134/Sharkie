@@ -32,43 +32,46 @@ export class Player {
 
     update(input, deltaTime) {
         this.checkCollision();
-
         this.currentState.handleInput(input);
-        if (this.currentState === this.states[5]) {
-            this.y += 1;
-        } else {
-            if (input.getKey("KeyD") && this.currentState !== this.states[4]) {
-                this.x += this.speed * Math.abs(input.getKey("KeyD"));
-                this.otherDirection = false;
-            }
-            if (input.getKey("KeyA") && this.currentState !== this.states[4]) {
-                this.x -= this.speed * Math.abs(input.getKey("KeyA"));
-                this.otherDirection = true;
-            }
-            if (input.getKey("KeyW") && this.currentState !== this.states[4]) this.y -= this.speed * Math.abs(input.getKey("KeyW"));
-            if (input.getKey("KeyS") && this.currentState !== this.states[4]) this.y += this.speed * Math.abs(input.getKey("KeyS"));
+    
+        if (this.currentState === this.states[5]) this.y += 1;
+        else this.handleMovement(input);
+    
+        this.handleBoundaries();
+    
+        this.updateAnimation(deltaTime);
+    }
+    
+    handleMovement(input) {
+        if (input.getKey("KeyD") && this.currentState !== this.states[4]) {
+            this.x += this.speed * Math.abs(input.getKey("KeyD"));
+            this.otherDirection = false;
         }
-
-        const hitboxRight = this.x + this.hitboxOffsetX + this.hitboxWidth;
-        const hitboxBottom = this.y + this.hitboxOffsetY + this.hitboxHeight;
-
-        if (this.game.endboss) {
-            if (this.x + this.hitboxOffsetX < 0) this.x = -this.hitboxOffsetX;
-            if (hitboxRight > this.game.width) this.x = this.game.width - this.hitboxWidth - this.hitboxOffsetX;
-            if (this.y + this.hitboxOffsetY < 0) this.y = -this.hitboxOffsetY;
-            if (hitboxBottom > this.game.height) this.y = this.game.height - this.hitboxHeight - this.hitboxOffsetY;
-        } else {
-            if (this.x + this.hitboxOffsetX < 0) this.x = -this.hitboxOffsetX;
-            if (hitboxRight > this.game.width - 200) this.x = this.game.width - 200 - this.hitboxWidth - this.hitboxOffsetX;
-            if (this.y + this.hitboxOffsetY < 0) this.y = -this.hitboxOffsetY;
-            if (hitboxBottom > this.game.height) this.y = this.game.height - this.hitboxHeight - this.hitboxOffsetY;
+        if (input.getKey("KeyA") && this.currentState !== this.states[4]) {
+            this.x -= this.speed * Math.abs(input.getKey("KeyA"));
+            this.otherDirection = true;
         }
-
+        if (input.getKey("KeyW") && this.currentState !== this.states[4]) {
+            this.y -= this.speed * Math.abs(input.getKey("KeyW"));
+        }
+        if (input.getKey("KeyS") && this.currentState !== this.states[4]) {
+            this.y += this.speed * Math.abs(input.getKey("KeyS"));
+        }
+    }
+    
+    handleBoundaries() {
+        const maxX = this.game.endboss ? this.game.width : this.game.width - 200;
+        this.x = Math.max(-this.hitboxOffsetX, Math.min(this.x, maxX - this.hitboxWidth - this.hitboxOffsetX));
+        this.y = Math.max(-this.hitboxOffsetY, Math.min(this.y, this.game.height - this.hitboxHeight - this.hitboxOffsetY));
+    }
+    
+    updateAnimation(deltaTime) {
         if (this.frameTimer > this.frameInterval) {
             this.frameTimer = 0;
-            if (this.frameX < this.maxFrame) this.frameX++;
-            else this.frameX = 0;
-        } else this.frameTimer += deltaTime;
+            this.frameX = this.frameX < this.maxFrame ? this.frameX + 1 : 0;
+        } else {
+            this.frameTimer += deltaTime;
+        }
     }
 
     draw(ctx) {
@@ -89,51 +92,49 @@ export class Player {
 
     checkCollision() {
         this.game.enemies.forEach(enemy => {
-            if (
-                enemy.x < this.x + this.hitboxOffsetX + this.hitboxWidth &&
-                enemy.x + enemy.width > this.x + this.hitboxOffsetX &&
-                enemy.y < this.y + this.hitboxOffsetY + this.hitboxHeight &&
-                enemy.y + enemy.height > this.y + this.hitboxOffsetY
-            ) {
+            if (this.isColliding(enemy)) {
                 enemy.markedForDeletion = true;
-                if (this.currentState === this.states[3]) {
-                    this.game.score++;
-                } else {
-                    this.setStates(4, 0);
-                    this.health -= 10;
-                }
+                this.handleEnemyCollision();
             }
         });
-
-        const endboss = this.game.endboss;
-        if (endboss) {
-            if (
-                endboss.x + endboss.hitboxOffsetX < this.x + this.hitboxOffsetX + this.hitboxWidth &&
-                endboss.x + endboss.hitboxOffsetX + endboss.hitboxWidth > this.x + this.hitboxOffsetX &&
-                endboss.y + endboss.hitboxOffsetY < this.y + this.hitboxOffsetY + this.hitboxHeight &&
-                endboss.y + endboss.hitboxOffsetY + endboss.hitboxHeight > this.y + this.hitboxOffsetY
-            ) {
-                if (this.currentState === this.states[3]) {
-                    endboss.takeDamage();
-                } else {
-                    if (!this.invincible) {
-                        this.setStates(4, 0);
-                        this.health -= 20;
-                        this.invincible = true;
-                        this.lastDamageTime = Date.now();
-
-                        if (this.x < endboss.x) {
-                            this.x -= 50;
-                        } else {
-                            this.x += 50;
-                        }
-                    }
-                }
-
-                if (this.invincible && Date.now() - this.lastDamageTime > this.invincibilityDuration) {
-                    this.invincible = false;
-                }
-            }
+        if (this.game.endboss && this.isColliding(this.game.endboss)) this.handleEndbossCollision();
+    }
+    
+    isColliding(entity) {
+        const offsetX = entity.hitboxOffsetX || 0;
+        const offsetY = entity.hitboxOffsetY || 0;
+    
+        return (
+            entity.x + offsetX < this.x + this.hitboxOffsetX + this.hitboxWidth &&
+            entity.x + offsetX + (entity.hitboxWidth || entity.width) > this.x + this.hitboxOffsetX &&
+            entity.y + offsetY < this.y + this.hitboxOffsetY + this.hitboxHeight &&
+            entity.y + offsetY + (entity.hitboxHeight || entity.height) > this.y + this.hitboxOffsetY
+        );
+    }
+    
+    handleEnemyCollision() {
+        if (this.currentState === this.states[3]) {
+            this.game.score++;
+        } else {
+            this.setStates(4, 0);
+            this.health -= 10;
         }
+    }
+    
+    handleEndbossCollision() {
+        if (this.currentState === this.states[3]) {
+            this.game.endboss.takeDamage();
+        } else if (!this.invincible) {
+            this.setStates(4, 0);
+            this.health -= 20;
+            this.invincible = true;
+            this.lastDamageTime = Date.now();
+            this.knockback(this.game.endboss);
+        }
+        if (this.invincible && Date.now() - this.lastDamageTime > this.invincibilityDuration) this.invincible = false;
+    }
+
+    knockback(endboss) {
+        this.x += this.x < endboss.x ? -50 : 50;
     }
 }

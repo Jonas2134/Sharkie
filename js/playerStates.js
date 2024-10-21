@@ -68,7 +68,6 @@ export class BubbleAttack extends State {
         const direction = !this.game.player.otherDirection;
         const bubble = new Bubble(this.game, this.game.player.x + (direction ? this.game.player.width : -20), this.game.player.y + this.game.player.height / 2, direction);
         this.game.bubbles.push(bubble);
-
         if (this.game.soundOn) this.bubbleSound.play();
     }
 

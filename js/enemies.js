@@ -10,24 +10,44 @@ class Enemy {
     }
 
     update(deltaTime) {
+        this.updatePosition();
+        this.handlePlayerSpeed();
+        this.checkDeletion();
+        this.updateAnimation(deltaTime);
+    }
+    
+    updatePosition() {
         this.x -= this.speedX;
         this.y += this.speedY;
-        if (this.game.player.x + this.game.player.hitboxOffsetX + this.game.player.hitboxWidth === this.game.width - 200) this.x -= this.speedX + this.game.speed;
-
-        if (this.frameTimer > this.frameInterval) {
-            this.frameTimer = 0;
-            if (this.frameX < this.maxFrame) this.frameX++;
-            else this.frameX = 0;
-        } else this.frameTimer += deltaTime;
-
-        if (this.markedForDeletion) {
-            this.game.enemies.splice(this.game.enemies.indexOf(this), 1);
-            this.game.smokes.push(new Smoke(this.game, this.x, this.y));
+    }
+    
+    handlePlayerSpeed() {
+        const playerHitboxEnd = this.game.player.x + this.game.player.hitboxOffsetX + this.game.player.hitboxWidth;
+        if (playerHitboxEnd === this.game.width - 200) {
+            this.x -= this.speedX + this.game.speed;
         }
-
-        if (this.x + this.width < 0) this.markedForDeletion = true;
     }
 
+    checkDeletion() {
+        if (this.markedForDeletion) {
+            this.game.enemies = this.game.enemies.filter(enemy => enemy !== this);
+            this.game.smokes.push(new Smoke(this.game, this.x, this.y));
+        }
+        
+        if (this.x + this.width < 0) {
+            this.markedForDeletion = true;
+        }
+    }
+
+    updateAnimation(deltaTime) {
+        if (this.frameTimer > this.frameInterval) {
+            this.frameTimer = 0;
+            this.frameX = (this.frameX < this.maxFrame) ? this.frameX + 1 : 0;
+        } else {
+            this.frameTimer += deltaTime;
+        }
+    }
+    
     draw(ctx) {
         if (this.game.debug) ctx.strokeRect(this.x, this.y, this.width, this.height);
         ctx.drawImage(this.image, this.frameX * this.frameWidth, 0, this.frameWidth, this.frameHeight, this.x, this.y, this.width, this.height);
@@ -45,7 +65,7 @@ class HorizontalSwimmingEnemy extends Enemy {
         this.frameWidth = 50;
         this.frameHeight = 41;
         this.x = this.game.width + Math.random() * this.game.width * 0.5;
-        this.y = Math.random() * this.game. height * 0.5;
+        this.y = Math.random() * this.game.height * 0.5;
         this.speedX = Math.random() + 1;
         this.speedY = 0;
         this.frameX = 0;

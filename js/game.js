@@ -58,74 +58,94 @@ export class Game {
 
     update(deltaTime) {
         if (!this.gameOver) {
-            if (this.startTime !== null) this.time = performance.now() - this.startTime;
-                
-            if (this.endboss === null && this.time >= this.endbossInterval) this.spawnEndboss();
-    
-            if (!this.endboss) {
-                this.background.update();
-                if (this.enemyTimer > this.enemyInterval) {
-                    this.addEnemy();
-                    this.enemyTimer = 0;
-                } else this.enemyTimer += deltaTime;
-            }
-    
-            this.player.update(this.input, deltaTime);
-            if (this.player.health <= 0) setTimeout(() => this.endGame(), 1250);
-    
-            this.bubbles.forEach(bubble => bubble.update());
-            this.bubbles = this.bubbles.filter(bubble => !bubble.markedForDeletion);
-    
-            this.enemies.forEach(enemy => {
-                enemy.update(deltaTime);
-                if (enemy.markedForDeletion) this.enemies.splice(this.enemies.indexOf(enemy), 1);
-            });
-    
-            this.smokes.forEach(smoke => smoke.update(deltaTime));
-            this.smokes = this.smokes.filter(smoke => !smoke.markedForDeletion);
-    
-            if (this.endboss) {
-                this.endboss.update(deltaTime);
-                if (this.endboss.health <= 0) setTimeout(() => this.endGame(), 700);
-            }
+            this.updateTime();
+            this.checkEndboss();
+            this.updateEntities(deltaTime);
+            this.updatePlayer(deltaTime);
+            this.updateBubbles();
+            this.updateEnemies(deltaTime);
+            this.updateSmokes(deltaTime);
+            if (this.endboss) this.updateEndboss(deltaTime);
         }
+    }
+    
+    updateTime() {
+        if (this.startTime !== null) this.time = performance.now() - this.startTime;
+    }
+    
+    checkEndboss() {
+        if (this.endboss === null && this.time >= this.endbossInterval) this.spawnEndboss();
+    }
+    
+    updateEntities(deltaTime) {
+        if (!this.endboss) {
+            this.background.update();
+            if (this.enemyTimer > this.enemyInterval) {
+                this.addEnemy();
+                this.enemyTimer = 0;
+            } else this.enemyTimer += deltaTime;
+        }
+    }
+    
+    updatePlayer(deltaTime) {
+        this.player.update(this.input, deltaTime);
+        if (this.player.health <= 0) setTimeout(() => this.endGame(), 1250);
+    }
+    
+    updateBubbles() {
+        this.bubbles.forEach(bubble => bubble.update());
+        this.bubbles = this.bubbles.filter(bubble => !bubble.markedForDeletion);
+    }
+    
+    updateEnemies(deltaTime) {
+        this.enemies.forEach(enemy => enemy.update(deltaTime));
+        this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
+    }
+    
+    updateSmokes(deltaTime) {
+        this.smokes.forEach(smoke => smoke.update(deltaTime));
+        this.smokes = this.smokes.filter(smoke => !smoke.markedForDeletion);
+    }
+    
+    updateEndboss(deltaTime) {
+        this.endboss.update(deltaTime);
+        if (this.endboss.health <= 0) setTimeout(() => this.endGame(), 700);
     }
 
     addEnemy() {
         if (this.endboss) return;
-
+    
         const randomEnemyType = Math.random();
-
+    
         if (this.speed > 0) {
-            if (this.score < 20) {
-                this.enemies.push(new JellyfishLila(this));
-            } else if (this.score >= 20 && this.score < 40) {
-                if (randomEnemyType < 0.5) this.enemies.push(new JellyfishLila(this));
-                else this.enemies.push(new JellyfishYellow(this));
-            } else if (this.score >= 40 && this.score < 60) {
-                if (randomEnemyType < 0.33) this.enemies.push(new JellyfishLila(this));
-                else if (randomEnemyType < 0.66) this.enemies.push(new JellyfishYellow(this));
-                else this.enemies.push(new JellyfishPink(this));
-            } else if (this.score >= 60) {
-                if (randomEnemyType < 0.25) this.enemies.push(new JellyfishLila(this));
-                else if (randomEnemyType < 0.5) this.enemies.push(new JellyfishYellow(this));
-                else if (randomEnemyType < 0.75) this.enemies.push(new JellyfishPink(this));
-                else this.enemies.push(new JellyfishGreen(this));
-            }
+            this.addJellyfish(randomEnemyType);
         }
-
-        if (this.score < 30) {
-            this.enemies.push(new PufferfishGreen(this));
-        } else if (this.score >= 30 && this.score < 60) {
-            if (randomEnemyType < 0.5) this.enemies.push(new PufferfishGreen(this));
-            else this.enemies.push(new PufferfishOrange(this));
-        } else if (this.score >= 60) {
-            if (randomEnemyType < 0.33) this.enemies.push(new PufferfishGreen(this));
-            else if (randomEnemyType < 0.66) this.enemies.push(new PufferfishOrange(this));
-            else this.enemies.push(new PufferfishRose(this));
-        }
+    
+        this.addPufferfish(randomEnemyType);
     }
     
+    addJellyfish(randomEnemyType) {
+        const jellyfishTypes = [JellyfishLila, JellyfishYellow, JellyfishPink, JellyfishGreen];
+        let thresholds = [20, 40, 60];
+        let type = this.getEnemyType(randomEnemyType, jellyfishTypes, thresholds);
+    
+        this.enemies.push(new type(this));
+    }
+    
+    addPufferfish(randomEnemyType) {
+        const pufferfishTypes = [PufferfishGreen, PufferfishOrange, PufferfishRose];
+        let thresholds = [30, 60];
+        let type = this.getEnemyType(randomEnemyType, pufferfishTypes, thresholds);
+    
+        this.enemies.push(new type(this));
+    }
+    
+    getEnemyType(randomEnemyType, enemyTypes, thresholds) {
+        let scoreIndex = thresholds.findIndex(threshold => this.score < threshold);
+        let typeIndex = Math.floor(randomEnemyType * (scoreIndex + 1));
+    
+        return enemyTypes[typeIndex] || enemyTypes[enemyTypes.length - 1];
+    }
 
     spawnEndboss() {
         this.endboss = new Endboss(this);

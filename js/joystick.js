@@ -13,18 +13,6 @@ export class Joystick {
         this.listener();
     }
 
-    update(ctx) {
-        this.reposition();
-        this.draw(ctx);
-    }
-
-    draw(ctx) {
-        // Draw Joystick base
-        this.circle(ctx, this.origin, this.radius, 'rgba(112, 112, 112, 0.9)');
-        // Draw Joystick handle
-        this.circle(ctx, this.pos, this.handleRadius, 'rgba(61, 61, 61, 0.9)');
-    }
-
     listener() {
         const canvas = document.getElementById('canvas');
         const getCanvasPosition = (e) => {
@@ -33,38 +21,43 @@ export class Joystick {
             const scaleY = canvas.height / rect.height;
             return new Vector2((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
         };
-
+        
         // Touch Events
         canvas.addEventListener('touchstart', e => {
             const touchPos = getCanvasPosition(e.touches[0]);
             this.touchPos = touchPos;
             if (this.touchPos.sub(this.origin).mag() <= this.radius) this.ondrag = true;
         });
-
+        
         canvas.addEventListener('touchend', () => {
             this.ondrag = false;
         });
-
+        
         canvas.addEventListener('touchmove', e => {
             const touchPos = getCanvasPosition(e.touches[0]);
             this.touchPos = touchPos;
         });
-
+        
         // Mouse Events
         canvas.addEventListener('mousedown', e => {
             const mousePos = getCanvasPosition(e);
             this.touchPos = mousePos;
             if (this.touchPos.sub(this.origin).mag() <= this.radius) this.ondrag = true;
         });
-
+        
         canvas.addEventListener('mouseup', () => {
             this.ondrag = false;
         });
-
+        
         canvas.addEventListener('mousemove', e => {
             const mousePos = getCanvasPosition(e);
             this.touchPos = mousePos;
         });
+    }
+    
+    update(ctx) {
+        this.reposition();
+        this.draw(ctx);
     }
 
     reposition() {
@@ -78,6 +71,13 @@ export class Joystick {
             this.inputPos.y = -this.inputPos.y;
             this.pos = this.origin.add(diff.normalize().mul(maxDist));
         }
+    }
+    
+    draw(ctx) {
+        // Draw Joystick base
+        this.circle(ctx, this.origin, this.radius, 'rgba(112, 112, 112, 0.9)');
+        // Draw Joystick handle
+        this.circle(ctx, this.pos, this.handleRadius, 'rgba(61, 61, 61, 0.9)');
     }
 
     circle(ctx, pos, radius, color) {
