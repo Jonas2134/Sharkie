@@ -6,7 +6,7 @@ export class InputHandler {
         this.game = game;
         this.keys = {};
         this.mobile = false;
-        this.joystick = new Joystick(game.width * 0.12, game.height * 0.82, game.width * 0.06, game.width * 0.035);
+        this.joystick = new Joystick(game, game.width * 0.12, game.height * 0.82, game.width * 0.06, game.width * 0.035);
         this.attackButton1 = new Button(game.width * 0.9, game.height * 0.75, 30, 'rgba(255, 0, 0, 0.9)', 'BA');
         this.attackButton2 = new Button(game.width * 0.8, game.height * 0.85, 30, 'rgba(0, 255, 0, 0.9)', 'FA');
         this.deadZone = 0.15;

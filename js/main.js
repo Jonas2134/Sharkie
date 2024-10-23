@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const menu = document.getElementById('menu');
-    const mainMenu = document.getElementById('mainMenu');
     const startBtn = document.getElementById('startBtn');
     const soundBtn = document.getElementById('soundBtn');
     const controlsBtn = document.getElementById('controlsBtn');
@@ -12,8 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const impressumBtn = document.getElementById('impressumBtn');
     const impressum = document.getElementById('impressum');
     const closeBtns = document.querySelectorAll('#closeBtn');
-    const backToMenuBtn = document.getElementById('backToMenuBtn');
-    const gameOverMenu = document.getElementById('gameOverMenu');
     const rotateMessage = document.getElementById('rotateMessage');
 
     const mainMenuSound = new Audio('../audio/mainMenuSound.mp3');
@@ -72,47 +69,47 @@ document.addEventListener('DOMContentLoaded', function () {
     checkOrientation();
     resizeCanvas();
 
-    startBtn.addEventListener('click', function () {
+    function hideMenu() {
         menu.classList.add("d-none");
         canvas.classList.remove("d-none");
-        game = new Game(canvas.width, canvas.height, soundOn);
+    }
+    
+    function initializeGame() {
+        game = new Game(canvas, canvas.width, canvas.height, soundOn);
         game.startGame();
-
+    }
+    
+    function setupDisplay() {
         if (isMobileDevice()) {
             resizeCanvas();
             enterFullscreen();
         }
+    }
+    
+    function handleAudio() {
+        mainMenuSound.pause();
+        gameStartSound.play();
+        setTimeout(() => gameSound.play(), 2000);
+    }
 
-        if (soundOn) {
-            mainMenuSound.pause();
-            gameStartSound.play();
-            setTimeout(() => gameSound.play(), 2000);
-        }
+    let lastTime = 0;
 
-        let lastTime = 0;
+    function gameLoop(timeStamp) {
+        const deltaTime = timeStamp - lastTime;
+        lastTime = timeStamp;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        game.isMobile = isMobileDevice();
+        game.update(deltaTime);
+        game.draw(ctx);
+        if (!game.gameOver) requestAnimationFrame(gameLoop);
+    }
 
-        function gameLoop(timeStamp) {
-            const deltaTime = timeStamp - lastTime;
-            lastTime = timeStamp;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            game.isMobile = isMobileDevice();
-            game.update(deltaTime);
-            game.draw(ctx);
-            if (!game.gameOver) requestAnimationFrame(gameLoop);
-        }
-
+    startBtn.addEventListener('click', function () {
+        hideMenu();
+        initializeGame();
+        setupDisplay();
+        if (soundOn) handleAudio();
         gameLoop(0);
-    });
-
-    backToMenuBtn.addEventListener('click', function () {
-        gameOverMenu.classList.add('d-none');
-        mainMenu.classList.remove('d-none');
-        canvas.classList.add('d-none');
-        game.resetGame();
-        if (soundOn) {
-            gameSound.pause();
-            mainMenuSound.play();
-        }
     });
 
     soundBtn.addEventListener('click', function () {
@@ -146,4 +143,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    function handleGameReset() {
+        if (canvas.classList.contains('d-none') && game && game.gameOver) {
+            menu.classList.remove("d-none");
+            game.resetGame();
+            if (soundOn) {
+                gameSound.pause();
+                mainMenuSound.play();
+            }
+        }
+    }
+
+    const observer = new MutationObserver(() => handleGameReset());
+    observer.observe(canvas, { attributes: true, attributeFilter: ['class'] });
 });

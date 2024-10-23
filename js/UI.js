@@ -3,6 +3,22 @@ export class UI {
         this.game = game;
         this.fontSize = 30;
         this.fontFamily = 'Luckiest Guy';
+        this.button = { x: 0, y: 0, width: 150, height: 50 };
+        this.addEventListeners();
+    }
+
+    addEventListeners() {
+        addEventListener('click', e => {
+            const canvasPosition = this.game.canvas.getBoundingClientRect();
+            const clickX = e.clientX - canvasPosition.left;
+            const clickY = e.clientY - canvasPosition.top;
+
+            if (this.game.gameOver && 
+                clickX >= this.button.x && clickX <= this.button.x + this.button.width &&
+                clickY >= this.button.y && clickY <= this.button.y + this.button.height) {
+                this.game.canvas.classList.add("d-none");
+            }
+        });
     }
 
     draw(ctx) {
@@ -11,6 +27,7 @@ export class UI {
         this.drawScore(ctx);
         this.drawTimer(ctx);
         this.drawGameOverMessage(ctx);
+        if (this.game.gameOver) this.drawButton(ctx);
     }
 
     drawHealthBarPlayer(ctx) {
@@ -30,9 +47,9 @@ export class UI {
         const healthRatio = Math.max(0, this.game.endboss.health / this.game.endboss.maxHealth);
         const borderRadius = 10;
 
-        this.drawRoundedRect(ctx, 300, 20, barWidth, barHeight, borderRadius, 'black', true);
-        this.drawRoundedRect(ctx, 300, 20, barWidth, barHeight, borderRadius, 'red', false);
-        if (healthRatio > 0) this.drawRoundedRect(ctx, 300, 20, barWidth * healthRatio, barHeight, borderRadius, 'green', false);
+        this.drawRoundedRect(ctx, this.game.width - barWidth - 20, 20, barWidth, barHeight, borderRadius, 'black', true);
+        this.drawRoundedRect(ctx, this.game.width - barWidth - 20, 20, barWidth, barHeight, borderRadius, 'red', false);
+        if (healthRatio > 0) this.drawRoundedRect(ctx, this.game.width - barWidth - 20, 20, barWidth * healthRatio, barHeight, borderRadius, 'green', false);
     }
 
     drawRoundedRect(ctx, x, y, width, height, radius, color, isBorder = false) {
@@ -84,5 +101,17 @@ export class UI {
                 ctx.fillText('Nope. Better luck next time!', this.game.width * 0.3, this.game.height * 0.5 + 20);
             }
         }
+    }
+
+    drawButton(ctx) {
+        this.button.x = this.game.width * 0.35;
+        this.button.y = this.game.height * 0.6;
+
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(this.button.x, this.button.y, this.button.width, this.button.height);
+        ctx.fillStyle = 'white';
+        ctx.font = this.fontSize * 0.8 + 'px ' + this.fontFamily;
+        ctx.textAlign = 'center';
+        ctx.fillText('Exit Game', this.button.x + this.button.width / 2, this.button.y + this.button.height / 2 + 10);
     }
 }

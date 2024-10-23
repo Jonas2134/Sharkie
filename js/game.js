@@ -6,7 +6,8 @@ import { UI } from "../js/UI.js";
 import { Endboss } from "../js/endboss.js";
 
 export class Game {
-    constructor(width, height, soundOn) {
+    constructor(canvas, width, height, soundOn) {
+        this.canvas = canvas
         this.width = width;
         this.height = height;
         this.soundOn = soundOn;
@@ -36,7 +37,7 @@ export class Game {
         this.gameOver = false;
         this.endboss = null;
         this.endbossTimer = 0;
-        this.endbossInterval = 60000;
+        this.endbossInterval = 10000;
     }
 
     set isMobile(is) {
@@ -47,13 +48,6 @@ export class Game {
     startGame() {
         this.startTime = performance.now();
         this.time = 0;
-    }
-
-    endGame() {
-        this.gameOver = true;
-        document.getElementById('menu').classList.remove("d-none");
-        document.getElementById('mainMenu').classList.add("d-none");
-        document.getElementById('gameOverMenu').classList.remove("d-none");
     }
 
     update(deltaTime) {
@@ -89,7 +83,6 @@ export class Game {
     
     updatePlayer(deltaTime) {
         this.player.update(this.input, deltaTime);
-        if (this.player.health <= 0) setTimeout(() => this.endGame(), 1250);
     }
     
     updateBubbles() {
@@ -109,18 +102,12 @@ export class Game {
     
     updateEndboss(deltaTime) {
         this.endboss.update(deltaTime);
-        if (this.endboss.health <= 0) setTimeout(() => this.endGame(), 700);
     }
 
     addEnemy() {
         if (this.endboss) return;
-    
         const randomEnemyType = Math.random();
-    
-        if (this.speed > 0) {
-            this.addJellyfish(randomEnemyType);
-        }
-    
+        if (this.speed > 0) this.addJellyfish(randomEnemyType);
         this.addPufferfish(randomEnemyType);
     }
     

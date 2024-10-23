@@ -65,7 +65,7 @@ class HorizontalSwimmingEnemy extends Enemy {
         this.frameWidth = 50;
         this.frameHeight = 41;
         this.x = this.game.width + Math.random() * this.game.width * 0.5;
-        this.y = Math.random() * this.game.height * 0.5;
+        this.y = Math.random() * this.game.height * 0.8;
         this.speedX = Math.random() + 1;
         this.speedY = 0;
         this.frameX = 0;
@@ -110,7 +110,7 @@ class VerticalSwimmingEnemy extends Enemy {
         super(game);
         this.frameWidth = 100;
         this.frameHeight = 142;
-        this.x = this.game.width;
+        this.x = this.game.width + Math.random() * this.game.width * 0.8;
         this.y = Math.random() * this.game.height * 0.5;
         this.speedX = 0;
         this.speedY = Math.random() > 0.5 ? 1 : -1;

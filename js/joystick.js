@@ -1,7 +1,8 @@
 import { Vector2 } from "../js/vector.js";
 
 export class Joystick {
-    constructor(x, y, radius, handleRadius) {
+    constructor(game, x, y, radius, handleRadius) {
+        this.game = game;
         this.pos = new Vector2(x, y);
         this.origin = new Vector2(x, y);
         this.radius = radius;
@@ -14,7 +15,7 @@ export class Joystick {
     }
 
     listener() {
-        const canvas = document.getElementById('canvas');
+        const canvas = this.game.canvas;
         const getCanvasPosition = (e) => {
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;

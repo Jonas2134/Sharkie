@@ -33,15 +33,12 @@ export class Player {
     update(input, deltaTime) {
         this.checkCollision();
         this.currentState.handleInput(input);
-    
         if (this.currentState === this.states[5]) this.y += 1;
         else this.handleMovement(input);
-    
         this.handleBoundaries();
-    
         this.updateAnimation(deltaTime);
     }
-    
+
     handleMovement(input) {
         if (input.getKey("KeyD") && this.currentState !== this.states[4]) {
             this.x += this.speed * Math.abs(input.getKey("KeyD"));
@@ -58,13 +55,13 @@ export class Player {
             this.y += this.speed * Math.abs(input.getKey("KeyS"));
         }
     }
-    
+
     handleBoundaries() {
         const maxX = this.game.endboss ? this.game.width : this.game.width - 200;
         this.x = Math.max(-this.hitboxOffsetX, Math.min(this.x, maxX - this.hitboxWidth - this.hitboxOffsetX));
         this.y = Math.max(-this.hitboxOffsetY, Math.min(this.y, this.game.height - this.hitboxHeight - this.hitboxOffsetY));
     }
-    
+
     updateAnimation(deltaTime) {
         if (this.frameTimer > this.frameInterval) {
             this.frameTimer = 0;
@@ -92,18 +89,30 @@ export class Player {
 
     checkCollision() {
         this.game.enemies.forEach(enemy => {
-            if (this.isColliding(enemy)) {
+            if (this.checkEnemyCollision(enemy)) {
                 enemy.markedForDeletion = true;
                 this.handleEnemyCollision();
             }
         });
-        if (this.game.endboss && this.isColliding(this.game.endboss)) this.handleEndbossCollision();
+        if (this.checkEndbossCollision()) this.handleEndbossCollision();
     }
-    
+
+    checkEnemyCollision(enemy) {
+        return this.isColliding(enemy) &&
+            this.currentState !== this.states[5]
+    }
+
+    checkEndbossCollision() {
+        return this.game.endboss &&
+            this.isColliding(this.game.endboss) &&
+            this.currentState !== this.states[5] &&
+            this.game.endboss.currentState !== this.states[3];
+    }
+
     isColliding(entity) {
         const offsetX = entity.hitboxOffsetX || 0;
         const offsetY = entity.hitboxOffsetY || 0;
-    
+
         return (
             entity.x + offsetX < this.x + this.hitboxOffsetX + this.hitboxWidth &&
             entity.x + offsetX + (entity.hitboxWidth || entity.width) > this.x + this.hitboxOffsetX &&
@@ -111,7 +120,7 @@ export class Player {
             entity.y + offsetY + (entity.hitboxHeight || entity.height) > this.y + this.hitboxOffsetY
         );
     }
-    
+
     handleEnemyCollision() {
         if (this.currentState === this.states[3]) {
             this.game.score++;
@@ -120,7 +129,7 @@ export class Player {
             this.health -= 10;
         }
     }
-    
+
     handleEndbossCollision() {
         if (this.currentState === this.states[3]) {
             this.game.endboss.takeDamage();
@@ -131,7 +140,11 @@ export class Player {
             this.lastDamageTime = Date.now();
             this.knockback(this.game.endboss);
         }
-        if (this.invincible && Date.now() - this.lastDamageTime > this.invincibilityDuration) this.invincible = false;
+        if (this.checkInvincibilityExpired()) this.invincible = false;
+    }
+
+    checkInvincibilityExpired() {
+        return this.invincible && (Date.now() - this.lastDamageTime > this.invincibilityDuration);
     }
 
     knockback(endboss) {
