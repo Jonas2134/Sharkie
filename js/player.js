@@ -106,7 +106,7 @@ export class Player {
         return this.game.endboss &&
             this.isColliding(this.game.endboss) &&
             this.currentState !== this.states[5] &&
-            this.game.endboss.currentState !== this.states[3];
+            this.game.endboss.currentState !== this.game.endboss.states[3];
     }
 
     isColliding(entity) {

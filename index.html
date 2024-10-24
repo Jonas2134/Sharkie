@@ -37,18 +37,18 @@
     <div id="menu">
         <div id="mainMenu">
             <h1>Sharkie</h1>
-            <button id="startBtn">Spiel Starten</button>
+            <button id="startBtn">Start Game</button>
             <div>
-                <button id="soundBtn">Sound: Aus</button>
-                <button id="controlsBtn">Tastenbelegung</button>
+                <button id="soundBtn">Sound: Off</button>
+                <button id="controlsBtn">Key assignment</button>
             </div>
-            <button id="impressumBtn">Impressum</button>
+            <button id="imprintBtn">Imprint</button>
 
             <aside id="controls" class="container d-none">
                 <section class="controls">
                     <img id="closeBtn" src="./img/assets/icons/close.png" alt="close">
                     <p>
-                        <strong>Bewegen:</strong>
+                        <strong>Move:</strong>
                         <br>
                         <br>
                         <img src="./img/assets/icons/w.png" alt="w">/
@@ -71,8 +71,8 @@
                 </section>
             </aside>
 
-            <aside id="impressum" class="container d-none">
-                <section class="impressumContainer">
+            <aside id="imprint" class="container d-none">
+                <section class="imprintContainer">
                     <img id="closeBtn" src="./img/assets/icons/close.png" alt="close">
                     <h2>Impressum</h2>
                     <p>Angaben gemäß § 5 DDG</p>
@@ -126,12 +126,10 @@
     </div>
 
     <div id="rotateMessage" class="d-none">
-        <p>Bitte wechsle ins Querformat, um das Spiel zu spielen.</p>
+        <p>Please switch to landscape format to play the game.</p>
     </div>
 
     <canvas id="canvas" class="d-none"></canvas>
-
-    <!-- TODO: Add a mute Button -->
 
     <script type="module" src="./js/main.js"></script>
 </body>

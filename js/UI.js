@@ -13,7 +13,7 @@ export class UI {
             const clickX = e.clientX - canvasPosition.left;
             const clickY = e.clientY - canvasPosition.top;
 
-            if (this.game.gameOver && 
+            if (this.game.gameOver &&
                 clickX >= this.button.x && clickX <= this.button.x + this.button.width &&
                 clickY >= this.button.y && clickY <= this.button.y + this.button.height) {
                 this.game.canvas.classList.add("d-none");
@@ -106,12 +106,38 @@ export class UI {
     drawButton(ctx) {
         this.button.x = this.game.width * 0.35;
         this.button.y = this.game.height * 0.6;
-
-        ctx.fillStyle = 'blue';
-        ctx.fillRect(this.button.x, this.button.y, this.button.width, this.button.height);
+        const radius = 20;
+    
+        this.drawButtonShape(ctx, radius);
+        this.drawButtonText(ctx);
+    }
+    
+    drawButtonShape(ctx, radius) {
         ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.moveTo(this.button.x + radius, this.button.y);
+        ctx.lineTo(this.button.x + this.button.width - radius, this.button.y);
+        ctx.quadraticCurveTo(this.button.x + this.button.width, this.button.y, this.button.x + this.button.width, this.button.y + radius);
+        ctx.lineTo(this.button.x + this.button.width, this.button.y + this.button.height - radius);
+        ctx.quadraticCurveTo(this.button.x + this.button.width, this.button.y + this.button.height, this.button.x + this.button.width - radius, this.button.y + this.button.height);
+        ctx.lineTo(this.button.x + radius, this.button.y + this.button.height);
+        ctx.quadraticCurveTo(this.button.x, this.button.y + this.button.height, this.button.x, this.button.y + this.button.height - radius);
+        ctx.lineTo(this.button.x, this.button.y + radius);
+        ctx.quadraticCurveTo(this.button.x, this.button.y, this.button.x + radius, this.button.y);
+        ctx.closePath();
+        ctx.fill();
+    
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+    
+    drawButtonText(ctx) {
+        ctx.fillStyle = 'black';
         ctx.font = this.fontSize * 0.8 + 'px ' + this.fontFamily;
         ctx.textAlign = 'center';
-        ctx.fillText('Exit Game', this.button.x + this.button.width / 2, this.button.y + this.button.height / 2 + 10);
+        ctx.textBaseline = 'middle';
+        const textY = this.button.y + this.button.height / 2;
+        ctx.fillText('Exit Game', this.button.x + this.button.width / 2, textY);
     }
 }

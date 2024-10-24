@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const soundBtn = document.getElementById('soundBtn');
     const controlsBtn = document.getElementById('controlsBtn');
     const controls = document.getElementById('controls');
-    const impressumBtn = document.getElementById('impressumBtn');
-    const impressum = document.getElementById('impressum');
+    const imprintBtn = document.getElementById('imprintBtn');
+    const imprint = document.getElementById('imprint');
     const closeBtns = document.querySelectorAll('#closeBtn');
     const rotateMessage = document.getElementById('rotateMessage');
 
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let soundOn = false;
     let game = null;
+    let lastTime = 0;
 
     function isMobileDevice() {
         return /Mobi|Android/i.test(navigator.userAgent);
@@ -56,6 +57,18 @@ document.addEventListener('DOMContentLoaded', function () {
             canvas.webkitRequestFullscreen();
         } else if (canvas.msRequestFullscreen) { // IE/Edge
             canvas.msRequestFullscreen();
+        }
+    }
+
+    function exitFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { // Firefox
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { // IE/Edge
+            document.msExitFullscreen();
         }
     }
 
@@ -92,8 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => gameSound.play(), 2000);
     }
 
-    let lastTime = 0;
-
     function gameLoop(timeStamp) {
         const deltaTime = timeStamp - lastTime;
         lastTime = timeStamp;
@@ -114,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     soundBtn.addEventListener('click', function () {
         soundOn = !soundOn;
-        soundBtn.textContent = `Sound: ${soundOn ? 'An' : 'Aus'}`;
+        soundBtn.textContent = `Sound: ${soundOn ? 'On' : 'Off'}`;
 
         if (!soundOn) {
             mainMenuSound.pause();
@@ -129,14 +140,14 @@ document.addEventListener('DOMContentLoaded', function () {
         controls.classList.remove('d-none');
     });
 
-    impressumBtn.addEventListener('click', function () {
-        impressum.classList.remove('d-none');
+    imprintBtn.addEventListener('click', function () {
+        imprint.classList.remove('d-none');
     });
 
     closeBtns.forEach(btn => {
         btn.addEventListener('click', function () {
-            if (!impressum.classList.contains('d-none')) {
-                impressum.classList.add('d-none');
+            if (!imprint.classList.contains('d-none')) {
+                imprint.classList.add('d-none');
             }
             if (!controls.classList.contains('d-none')) {
                 controls.classList.add('d-none');
@@ -151,6 +162,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (soundOn) {
                 gameSound.pause();
                 mainMenuSound.play();
+            }
+            if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                exitFullscreen();
             }
         }
     }

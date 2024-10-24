@@ -40,7 +40,7 @@ export class Bubble {
     
     checkEndbossCollision() {
         const endboss = this.game.endboss;
-        if (endboss && this.isColliding(endboss)) {
+        if (endboss && this.isColliding(endboss) && this.game.endboss.currentState !== this.game.endboss.states[3]) {
             endboss.health -= 50;
             endboss.setStates(4);
             this.markedForDeletion = true;
