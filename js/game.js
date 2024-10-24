@@ -29,7 +29,7 @@ export class Game {
         this.smokes = [];
         this.enemyTimer = 0;
         this.enemyInterval = 500;
-        this.debug = true;
+        this.debug = false;
         this.score = 0;
         this.fontColor = 'black';
         this.startTime = null;
@@ -37,7 +37,7 @@ export class Game {
         this.gameOver = false;
         this.endboss = null;
         this.endbossTimer = 0;
-        this.endbossInterval = 10000;
+        this.endbossInterval = 60000;
     }
 
     set isMobile(is) {
