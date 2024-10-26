@@ -25,6 +25,7 @@ export class Game {
         this.resetGame();
         this.player.currentState = this.player.states[0];
         this.player.currentState.enter();
+        this.gameReset = false;
     }
 
     /**

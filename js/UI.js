@@ -10,7 +10,10 @@ export class UI {
         this.game = game;
         this.fontSize = 30;
         this.fontFamily = 'Luckiest Guy';
-        this.button = { x: 0, y: 0, width: 150, height: 50 };
+        this.buttons = {
+            exit: { x: 0, y: 0, width: 150, height: 50 },
+            restart: { x: 0, y: 0, width: 150, height: 50 }
+        };
         this.addEventListeners();
     }
 
@@ -30,19 +33,38 @@ export class UI {
         const clickX = e.clientX - canvasPosition.left;
         const clickY = e.clientY - canvasPosition.top;
 
-        if (this.isGameOverButtonClick(clickX, clickY)) this.game.canvas.classList.add("d-none");
+        if (this.isExitButtonClick(clickX, clickY)) {
+            this.game.canvas.classList.add("d-none");
+        } else if (this.isRestartButtonClick(clickX, clickY)) {
+            this.game.gameReset = true;
+            this.game.canvas.classList.add("d-none");
+        }
     }
 
     /**
-     * Checks if the click position is within the game over button bounds.
+     * Checks if the click position is within the "Exit Game" button bounds.
      * @param {number} clickX - The x-coordinate of the click.
      * @param {number} clickY - The y-coordinate of the click.
-     * @returns {boolean} True if the button was clicked, otherwise false.
+     * @returns {boolean} True if the "Exit Game" button was clicked, otherwise false.
      */
-    isGameOverButtonClick(clickX, clickY) {
+    isExitButtonClick(clickX, clickY) {
+        const button = this.buttons.exit;
         return this.game.gameOver &&
-               clickX >= this.button.x && clickX <= this.button.x + this.button.width &&
-               clickY >= this.button.y && clickY <= this.button.y + this.button.height;
+               clickX >= button.x && clickX <= button.x + button.width &&
+               clickY >= button.y && clickY <= button.y + button.height;
+    }
+
+    /**
+     * Checks if the click position is within the "Restart Game" button bounds.
+     * @param {number} clickX - The x-coordinate of the click.
+     * @param {number} clickY - The y-coordinate of the click.
+     * @returns {boolean} True if the "Restart Game" button was clicked, otherwise false.
+     */
+    isRestartButtonClick(clickX, clickY) {
+        const button = this.buttons.restart;
+        return this.game.gameOver &&
+               clickX >= button.x && clickX <= button.x + button.width &&
+               clickY >= button.y && clickY <= button.y + button.height;
     }
 
     /**
@@ -55,7 +77,10 @@ export class UI {
         this.drawScore(ctx);
         this.drawTimer(ctx);
         this.drawGameOverMessage(ctx);
-        if (this.game.gameOver) this.drawButton(ctx);
+        if (this.game.gameOver) {
+            this.drawButton(ctx, this.buttons.exit, 'Exit Game');
+            this.drawButton(ctx, this.buttons.restart, 'Restart Game');
+        }
     }
 
     /**
@@ -188,22 +213,25 @@ export class UI {
     /**
      * Draws the game over button on the canvas.
      * @param {CanvasRenderingContext2D} ctx - The rendering context.
+     * @param {Object} button - The button object with position and size.
+     * @param {string} text - The text to display on the button.
      */
-    drawButton(ctx) {
-        this.button.x = this.game.width * 0.35;
-        this.button.y = this.game.height * 0.6;
+    drawButton(ctx, button, text) {
+        button.x = this.game.width * 0.25 + (text === 'Restart Game' ? 200 : 0); // Adjust position for the second button
+        button.y = this.game.height * 0.6;
         const radius = 20;
-        this.drawButtonShape(ctx, radius);
-        this.drawButtonText(ctx);
+        this.drawButtonShape(ctx, button, radius);
+        this.drawButtonText(ctx, button, text);
     }
 
     /**
      * Draws the shape of the button.
      * @param {CanvasRenderingContext2D} ctx - The rendering context.
+     * @param {Object} button - The button object with position and size.
      * @param {number} radius - The corner radius of the button.
      */
-    drawButtonShape(ctx, radius) {
-        this.drawRoundedShape(ctx, this.button.x, this.button.y, this.button.width, this.button.height, radius);
+    drawButtonShape(ctx, button, radius) {
+        this.drawRoundedShape(ctx, button.x, button.y, button.width, button.height, radius);
         ctx.fillStyle = 'white';
         ctx.fill();
         ctx.strokeStyle = 'black';
@@ -214,13 +242,15 @@ export class UI {
     /**
      * Draws the text inside the game over button.
      * @param {CanvasRenderingContext2D} ctx - The rendering context.
+     * @param {Object} button - The button object with position and size.
+     * @param {string} text - The text to display on the button.
      */
-    drawButtonText(ctx) {
+    drawButtonText(ctx, button, text) {
         ctx.fillStyle = 'black';
         ctx.font = this.fontSize * 0.8 + 'px ' + this.fontFamily;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        const textY = this.button.y + this.button.height / 2;
-        ctx.fillText('Exit Game', this.button.x + this.button.width / 2, textY);
+        const textY = button.y + button.height / 2;
+        ctx.fillText(text, button.x + button.width / 2, textY);
     }
 }

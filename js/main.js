@@ -57,43 +57,32 @@ document.addEventListener('DOMContentLoaded', function () {
      * Displays a message if the device is in portrait mode on mobile.
      */
     function checkOrientation() {
-        if (isMobileDevice() || isTabletDevice()) {
-            if (window.innerHeight > window.innerWidth) {
-                rotateMessage.classList.remove('d-none');
-            } else {
-                rotateMessage.classList.add('d-none');
-            }
-        }
+        const isPortrait = window.innerHeight > window.innerWidth;
+        const largeTabletWidth = 1024;
+        if (isMobileDevice() || (isTabletDevice() && window.innerWidth <= largeTabletWidth)) {
+            if (isPortrait) rotateMessage.classList.remove('d-none');
+            else rotateMessage.classList.add('d-none');
+        } else rotateMessage.classList.add('d-none');
     }
 
     /**
      * Requests the browser to enter fullscreen mode.
      */
     function enterFullscreen() {
-        if (canvas.requestFullscreen) {
-            canvas.requestFullscreen();
-        } else if (canvas.mozRequestFullScreen) { // Firefox
-            canvas.mozRequestFullScreen();
-        } else if (canvas.webkitRequestFullscreen) { // Chrome, Safari, Opera
-            canvas.webkitRequestFullscreen();
-        } else if (canvas.msRequestFullscreen) { // IE/Edge
-            canvas.msRequestFullscreen();
-        }
+        if (canvas.requestFullscreen) canvas.requestFullscreen();
+        else if (canvas.mozRequestFullScreen) canvas.mozRequestFullScreen();
+        else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
+        else if (canvas.msRequestFullscreen) canvas.msRequestFullscreen();
     }
 
     /**
      * Exits fullscreen mode in the browser.
      */
     function exitFullscreen() {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) { // Firefox
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { // IE/Edge
-            document.msExitFullscreen();
-        }
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
     }
 
     window.addEventListener('resize', () => {
@@ -186,12 +175,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     closeBtns.forEach(btn => {
         btn.addEventListener('click', function () {
-            if (!imprint.classList.contains('d-none')) {
-                imprint.classList.add('d-none');
-            }
-            if (!controls.classList.contains('d-none')) {
-                controls.classList.add('d-none');
-            }
+            if (!imprint.classList.contains('d-none')) imprint.classList.add('d-none');
+            if (!controls.classList.contains('d-none')) controls.classList.add('d-none');
         });
     });
 
@@ -199,7 +184,12 @@ document.addEventListener('DOMContentLoaded', function () {
      * Handles game reset when returning to the main menu.
      */
     function handleGameReset() {
-        if (canvas.classList.contains('d-none') && game && game.gameOver) {
+        if (canvas.classList.contains('d-none') && game && game.gameOver && game.gameReset === true) {
+            game.resetGame();
+            initializeGame();
+            gameLoop(0);
+            canvas.classList.remove("d-none");
+        } else if (canvas.classList.contains('d-none') && game && game.gameOver) {
             menu.classList.remove("d-none");
             game.resetGame();
             if (soundOn) {
