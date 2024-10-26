@@ -1,4 +1,13 @@
+/**
+ * Class representing a smoke effect animation in the game.
+ */
 export class Smoke {
+    /**
+     * Creates a smoke animation instance.
+     * @param {Object} game - The game instance.
+     * @param {number} x - The x-coordinate of the smoke effect's initial position.
+     * @param {number} y - The y-coordinate of the smoke effect's initial position.
+     */
     constructor(game, x, y) {
         this.game = game;
         this.image = document.getElementById('smoke');
@@ -16,6 +25,10 @@ export class Smoke {
         this.markedForDeletion = false;
     }
 
+    /**
+     * Updates the smoke animation frame and position.
+     * @param {number} deltaTime - The time elapsed since the last update, in milliseconds.
+     */
     update(deltaTime) {
         this.x -= this.game.speed;
         if (this.frameTimer > this.frameInterval) {
@@ -27,6 +40,10 @@ export class Smoke {
         }
     }
 
+    /**
+     * Draws the current frame of the smoke animation onto the canvas.
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+     */
     draw(ctx) {
         ctx.drawImage(this.image, this.frameX * this.frameWidth, 0, this.frameWidth, this.frameHeight, this.x, this.y, this.width, this.height);
     }

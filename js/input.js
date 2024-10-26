@@ -1,7 +1,14 @@
 import { Joystick } from "../js/joystick.js";
 import { Button } from "../js/buttons.js";
 
+/**
+ * Class responsible for handling user input for the game.
+ */
 export class InputHandler {
+    /**
+     * Creates an InputHandler instance.
+     * @param {Object} game - The game instance.
+     */
     constructor(game) {
         this.game = game;
         this.keys = {};
@@ -26,6 +33,12 @@ export class InputHandler {
         });
     }
 
+    /**
+     * Retrieves the state of a specified key.
+     * On mobile, this method uses joystick and button inputs to simulate key states.
+     * @param {string} key - The key code to check, e.g., "KeyW" or "Space".
+     * @returns {boolean} - The state of the specified key.
+     */
     getKey(key) {
         if (this.mobile) {
             const keysToReset = ["KeyD", "KeyA", "KeyS", "KeyW", "KeyE", "Space"];
@@ -42,6 +55,10 @@ export class InputHandler {
         return this.keys[key];
     }
 
+    /**
+     * Draws the joystick and buttons on the canvas when in mobile mode.
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+     */
     draw(ctx) {
         if (this.mobile) {
             this.joystick.update(ctx);

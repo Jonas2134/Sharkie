@@ -1,6 +1,13 @@
 import { Swim, Spawn, Attack, Dead, Hurt } from '../js/endbossStates.js';
 
+/**
+ * Represents the end boss in the game.
+ */
 export class Endboss {
+    /**
+     * Creates an instance of the Endboss class.
+     * @param {Object} game - The game instance.
+     */
     constructor(game) {
         this.game = game;
         this.image = document.getElementById('endboss');
@@ -33,42 +40,60 @@ export class Endboss {
         this.lastDamageTime = 0;
     }
 
+    /**
+     * Updates the end boss's position and state based on the game state.
+     * @param {number} deltaTime - The time passed since the last update in milliseconds.
+     */
     update(deltaTime) {
         this.updateHitbox();
         this.currentState.handleInput();
-    
         if (this.shouldMove()) {
             this.updateDirection();
             this.move();
         }
-    
         this.updateInvincibility();
-    
         this.updateAnimation(deltaTime);
     }
     
+    /**
+     * Determines if the end boss should move based on its current state.
+     * @returns {boolean} True if the end boss should move, otherwise false.
+     */
     shouldMove() {
         return this.currentState !== this.states[1] &&
                this.currentState !== this.states[3] &&
                this.currentState !== this.states[4];
     }
     
+    /**
+     * Updates the direction of the end boss based on the player's position.
+     */
     updateDirection() {
         if (this.game.player.x + this.game.player.hitboxOffsetX < this.x + this.hitboxOffsetX && this.otherDirection) this.otherDirection = false;
         else if (this.game.player.x + this.game.player.hitboxOffsetX > this.x + this.hitboxOffsetX && !this.otherDirection) this.otherDirection = true;
     }
     
+    /**
+     * Moves the end boss towards the player.
+     */
     move() {
         this.x += this.otherDirection ? this.speed : -this.speed;
         this.y += this.game.player.y + this.game.player.hitboxOffsetY > this.y + this.hitboxOffsetY ? this.speed : -this.speed;
     }
     
+    /**
+     * Updates the invincibility state of the end boss.
+     */
     updateInvincibility() {
         if (this.invincible && Date.now() - this.lastDamageTime > this.invincibilityDuration) {
             this.invincible = false;
         }
     }
     
+    /**
+     * Updates the animation frame of the end boss based on the time passed.
+     * @param {number} deltaTime - The time passed since the last update in milliseconds.
+     */
     updateAnimation(deltaTime) {
         if (this.frameTimer > this.frameInterval) {
             this.frameTimer = 0;
@@ -78,6 +103,9 @@ export class Endboss {
         }
     }
 
+    /**
+     * Applies damage to the end boss if it is not invincible.
+     */
     takeDamage() {
         if (!this.invincible) {
             this.setStates(4);
@@ -87,6 +115,9 @@ export class Endboss {
         }
     }
 
+    /**
+     * Updates the hitbox of the end boss based on its current state.
+     */
     updateHitbox() {
         switch (this.currentState) {
             case this.states[3]:
@@ -103,6 +134,10 @@ export class Endboss {
         }
     }
 
+    /**
+     * Draws the end boss on the canvas.
+     * @param {CanvasRenderingContext2D} ctx - The rendering context of the canvas.
+     */
     draw(ctx) {
         if (this.otherDirection) this.game.flipImage(ctx, this);
         if (this.game.debug) {
@@ -113,6 +148,10 @@ export class Endboss {
         if (this.otherDirection) this.game.flipImageBack(ctx, this);
     }
 
+    /**
+     * Sets the current state of the end boss and enters that state.
+     * @param {number} state - The index of the state to set.
+     */
     setStates(state) {
         this.currentState = this.states[state];
         this.currentState.enter();

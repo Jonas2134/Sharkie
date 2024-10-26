@@ -27,19 +27,37 @@ document.addEventListener('DOMContentLoaded', function () {
     let game = null;
     let lastTime = 0;
 
+    /**
+     * Checks if the device is a mobile device.
+     * @returns {boolean} True if the device is mobile, false otherwise.
+     */
     function isMobileDevice() {
         return /Mobi|Android/i.test(navigator.userAgent);
     }
 
+    /**
+     * Checks if the device is a tablet.
+     * @returns {boolean} True if the device is a tablet, false otherwise.
+     */
+    function isTabletDevice() {
+        return /iPad|Android(?!.*Mobile)/i.test(navigator.userAgent) || (window.innerWidth >= 600 && window.innerWidth <= 1200);
+    }
+
+    /**
+     * Resizes the canvas to fit the screen size on mobile devices.
+     */
     function resizeCanvas() {
-        if (isMobileDevice()) {
+        if (isMobileDevice() || isTabletDevice()) {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         }
     }
 
+    /**
+     * Displays a message if the device is in portrait mode on mobile.
+     */
     function checkOrientation() {
-        if (isMobileDevice()) {
+        if (isMobileDevice() || isTabletDevice()) {
             if (window.innerHeight > window.innerWidth) {
                 rotateMessage.classList.remove('d-none');
             } else {
@@ -48,6 +66,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    /**
+     * Requests the browser to enter fullscreen mode.
+     */
     function enterFullscreen() {
         if (canvas.requestFullscreen) {
             canvas.requestFullscreen();
@@ -60,6 +81,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    /**
+     * Exits fullscreen mode in the browser.
+     */
     function exitFullscreen() {
         if (document.exitFullscreen) {
             document.exitFullscreen();
@@ -82,34 +106,50 @@ document.addEventListener('DOMContentLoaded', function () {
     checkOrientation();
     resizeCanvas();
 
+    /**
+     * Hides the main menu and displays the game canvas.
+     */
     function hideMenu() {
         menu.classList.add("d-none");
         canvas.classList.remove("d-none");
     }
-    
+
+    /**
+     * Initializes a new game instance and starts it.
+     */
     function initializeGame() {
         game = new Game(canvas, canvas.width, canvas.height, soundOn);
         game.startGame();
     }
-    
+
+    /**
+     * Sets up display adjustments for mobile devices, including fullscreen mode.
+     */
     function setupDisplay() {
-        if (isMobileDevice()) {
+        if (isMobileDevice() || isTabletDevice()) {
             resizeCanvas();
             enterFullscreen();
         }
     }
-    
+
+    /**
+     * Handles the audio playback for the game start and background music.
+     */
     function handleAudio() {
         mainMenuSound.pause();
         gameStartSound.play();
         setTimeout(() => gameSound.play(), 2000);
     }
 
+    /**
+     * The main game loop, which updates and draws the game state on each frame.
+     * @param {number} timeStamp - The current time in milliseconds.
+     */
     function gameLoop(timeStamp) {
         const deltaTime = timeStamp - lastTime;
         lastTime = timeStamp;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        game.isMobile = isMobileDevice();
+        game.isMobile = isMobileDevice() || isTabletDevice();
         game.update(deltaTime);
         game.draw(ctx);
         if (!game.gameOver) requestAnimationFrame(gameLoop);
@@ -155,6 +195,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    /**
+     * Handles game reset when returning to the main menu.
+     */
     function handleGameReset() {
         if (canvas.classList.contains('d-none') && game && game.gameOver) {
             menu.classList.remove("d-none");

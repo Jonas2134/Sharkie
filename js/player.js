@@ -1,6 +1,13 @@
 import { IDLE, Swimming, BubbleAttack, FinAttack, Hurt, Dead } from '../js/playerStates.js';
 
+/**
+ * Class representing the Player.
+ */
 export class Player {
+    /**
+     * Creates an instance of the Player class.
+     * @param {object} game - The game instance.
+     */
     constructor(game) {
         this.game = game;
         this.width = 150;
@@ -30,6 +37,11 @@ export class Player {
         this.lastDamageTime = 0;
     }
 
+    /**
+     * Updates the player's state, movement, boundaries, and animation.
+     * @param {object} input - Input from the player.
+     * @param {number} deltaTime - The time since the last frame.
+     */
     update(input, deltaTime) {
         this.checkCollision();
         this.currentState.handleInput(input);
@@ -39,6 +51,10 @@ export class Player {
         this.updateAnimation(deltaTime);
     }
 
+    /**
+     * Handles player movement based on input keys.
+     * @param {object} input - The player's input.
+     */
     handleMovement(input) {
         if (input.getKey("KeyD") && this.currentState !== this.states[4]) {
             this.x += this.speed * Math.abs(input.getKey("KeyD"));
@@ -56,12 +72,19 @@ export class Player {
         }
     }
 
+    /**
+     * Restricts the player within the game boundaries.
+     */
     handleBoundaries() {
         const maxX = this.game.endboss ? this.game.width : this.game.width - 200;
         this.x = Math.max(-this.hitboxOffsetX, Math.min(this.x, maxX - this.hitboxWidth - this.hitboxOffsetX));
         this.y = Math.max(-this.hitboxOffsetY, Math.min(this.y, this.game.height - this.hitboxHeight - this.hitboxOffsetY));
     }
 
+    /**
+     * Updates the player's animation frame based on time interval.
+     * @param {number} deltaTime - The time since the last frame.
+     */
     updateAnimation(deltaTime) {
         if (this.frameTimer > this.frameInterval) {
             this.frameTimer = 0;
@@ -71,6 +94,10 @@ export class Player {
         }
     }
 
+    /**
+     * Draws the player on the canvas.
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+     */
     draw(ctx) {
         if (this.otherDirection) this.game.flipImage(ctx, this);
         if (this.game.debug) {
@@ -81,12 +108,20 @@ export class Player {
         if (this.otherDirection) this.game.flipImageBack(ctx, this);
     }
 
+    /**
+     * Sets the player's current state and speed.
+     * @param {number} state - The new state index.
+     * @param {number} speed - The new speed multiplier.
+     */
     setStates(state, speed) {
         this.currentState = this.states[state];
         this.game.speed = this.game.maxSpeed * speed;
         this.currentState.enter();
     }
 
+    /**
+     * Checks for collisions between the player and enemies or endboss.
+     */
     checkCollision() {
         this.game.enemies.forEach(enemy => {
             if (this.checkEnemyCollision(enemy)) {
@@ -97,11 +132,20 @@ export class Player {
         if (this.checkEndbossCollision()) this.handleEndbossCollision();
     }
 
+    /**
+     * Checks collision with a specific enemy.
+     * @param {object} enemy - The enemy object to check.
+     * @returns {boolean} True if colliding, false otherwise.
+     */
     checkEnemyCollision(enemy) {
         return this.isColliding(enemy) &&
             this.currentState !== this.states[5]
     }
 
+    /**
+     * Checks collision with the endboss.
+     * @returns {boolean} True if colliding with the endboss, false otherwise.
+     */
     checkEndbossCollision() {
         return this.game.endboss &&
             this.isColliding(this.game.endboss) &&
@@ -109,6 +153,11 @@ export class Player {
             this.game.endboss.currentState !== this.game.endboss.states[3];
     }
 
+    /**
+     * Checks for collision between the player and any entity.
+     * @param {object} entity - The entity to check collision with.
+     * @returns {boolean} True if colliding, false otherwise.
+     */
     isColliding(entity) {
         const offsetX = entity.hitboxOffsetX || 0;
         const offsetY = entity.hitboxOffsetY || 0;
@@ -121,6 +170,9 @@ export class Player {
         );
     }
 
+    /**
+     * Handles player collision with an enemy.
+     */
     handleEnemyCollision() {
         if (this.currentState === this.states[3]) {
             this.game.score++;
@@ -130,6 +182,9 @@ export class Player {
         }
     }
 
+    /**
+     * Handles player collision with the endboss.
+     */
     handleEndbossCollision() {
         if (this.currentState === this.states[3]) {
             this.game.endboss.takeDamage();
@@ -143,10 +198,18 @@ export class Player {
         if (this.checkInvincibilityExpired()) this.invincible = false;
     }
 
+    /**
+     * Checks if the player's invincibility has expired.
+     * @returns {boolean} True if invincibility has expired, false otherwise.
+     */
     checkInvincibilityExpired() {
         return this.invincible && (Date.now() - this.lastDamageTime > this.invincibilityDuration);
     }
 
+    /**
+     * Applies knockback effect on the player when colliding with the endboss.
+     * @param {object} endboss - The endboss object.
+     */
     knockback(endboss) {
         this.x += this.x < endboss.x ? -50 : 50;
     }
