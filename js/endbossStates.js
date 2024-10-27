@@ -101,6 +101,7 @@ export class Attack extends State {
     constructor(game) {
         super('ATTACK', game);
         this.biteSound = new Audio('../audio/bite.mp3');
+        this.biteSound.volume = 0.5;
     }
 
     /**
@@ -133,6 +134,7 @@ export class Dead extends State {
     constructor(game) {
         super('DEAD', game);
         this.bossDeathSound = new Audio('../audio/bossDeathSound.mp3');
+        this.bossDeathSound.volume = 0.5;
     }
 
     /**
@@ -168,6 +170,7 @@ export class Hurt extends State {
     constructor(game) {
         super('HURT', game);
         this.bossHurtSound = new Audio('../audio/bossHurtSound.mp3');
+        this.bossHurtSound.volume = 0.5;
     }
 
     /**
@@ -177,7 +180,10 @@ export class Hurt extends State {
         this.game.endboss.frameX = 0;
         this.game.endboss.maxFrame = 3;
         this.game.endboss.frameY = 4;
-        if (this.game.soundOn) this.bossHurtSound.play();
+        if (this.game.soundOn) {
+            this.bossHurtSound.currentTime = 0;
+            this.bossHurtSound.play();
+        }
     }
 
     /**

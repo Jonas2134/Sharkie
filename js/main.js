@@ -14,8 +14,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const rotateMessage = document.getElementById('rotateMessage');
 
     const mainMenuSound = new Audio('../audio/mainMenuSound.mp3');
+    mainMenuSound.volume = 0.3;
     const gameSound = new Audio('../audio/gameBackground.mp3');
+    gameSound.volume = 0.3;
     const gameStartSound = new Audio('../audio/gameStart.mp3');
+    gameStartSound.volume = 0.3;
 
     canvas.width = 720;
     canvas.height = 480;

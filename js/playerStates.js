@@ -67,6 +67,7 @@ export class Swimming extends State {
     constructor(game) {
         super('SWIMMING', game);
         this.swimmingSound = new Audio('../audio/swimmingSound.mp3');
+        this.swimmingSound.volume = 0.5;
     }
 
     /** 
@@ -100,6 +101,7 @@ export class BubbleAttack extends State {
     constructor(game) {
         super('ATTACK_BUBBLE', game);
         this.bubbleSound = new Audio('../audio/bubble.mp3');
+        this.bubbleSound.volume = 0.5;
     }
 
     /** 
@@ -109,11 +111,13 @@ export class BubbleAttack extends State {
         this.game.player.frameX = 0;
         this.game.player.maxFrame = 6;
         this.game.player.frameY = 2;
-
         const direction = !this.game.player.otherDirection;
         const bubble = new Bubble(this.game, this.game.player.x + (direction ? this.game.player.width : -20), this.game.player.y + this.game.player.height / 2, direction);
         this.game.bubbles.push(bubble);
-        if (this.game.soundOn) this.bubbleSound.play();
+        if (this.game.soundOn) {
+            this.bubbleSound.currentTime = 0;
+            this.bubbleSound.play();
+        }
     }
 
     /**
@@ -138,6 +142,7 @@ export class FinAttack extends State {
     constructor(game) {
         super('ATTACK_FIN', game);
         this.slapSound = new Audio('../audio/slap.mp3');
+        this.slapSound.volume = 0.5;
     }
 
     /** 
@@ -147,7 +152,10 @@ export class FinAttack extends State {
         this.game.player.frameX = 0;
         this.game.player.maxFrame = 7;
         this.game.player.frameY = 3;
-        if (this.game.soundOn) this.slapSound.play();
+        if (this.game.soundOn) {
+            this.slapSound.currentTime = 0;
+            this.slapSound.play();
+        }
     }
 
     /**
@@ -172,6 +180,7 @@ export class Hurt extends State {
     constructor(game) {
         super('HURT', game);
         this.hurtSound = new Audio('../audio/hurt.mp3');
+        this.hurtSound.volume = 0.5;
     }
 
     /** 
@@ -181,7 +190,10 @@ export class Hurt extends State {
         this.game.player.frameX = 0;
         this.game.player.maxFrame = 4;
         this.game.player.frameY = 4;
-        if (this.game.soundOn) this.hurtSound.play();
+        if (this.game.soundOn) {
+            this.hurtSound.currentTime = 0;
+            this.hurtSound.play();
+        }
     }
 
     /**
