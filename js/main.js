@@ -184,24 +184,59 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     /**
-     * Handles game reset when returning to the main menu.
+     * Manages game reset, returning to the main menu if needed.
      */
     function handleGameReset() {
-        if (canvas.classList.contains('d-none') && game && game.gameOver && game.gameReset === true) {
-            game.resetGame();
-            initializeGame();
-            gameLoop(0);
-            canvas.classList.remove("d-none");
-        } else if (canvas.classList.contains('d-none') && game && game.gameOver) {
-            menu.classList.remove("d-none");
-            game.resetGame();
-            if (soundOn) {
-                gameSound.pause();
-                mainMenuSound.play();
+        if (canvas.classList.contains('d-none') && game && game.gameOver) {
+            if (game.gameReset) {
+                resetAndInitializeGame();
+            } else {
+                resetToMainMenu();
             }
-            if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-                exitFullscreen();
-            }
+        }
+    }
+
+    /**
+     * Resets and initializes the game when game reset flag is true.
+     * @private
+     */
+    function resetAndInitializeGame() {
+        game.resetGame();
+        initializeGame();
+        gameLoop(0);
+        canvas.classList.remove("d-none");
+    }
+
+    /**
+     * Returns to main menu, resets game, handles sound, and exits fullscreen if active.
+     * @private
+     */
+    function resetToMainMenu() {
+        menu.classList.remove("d-none");
+        game.resetGame();
+        handleSoundOnMenuReturn();
+        exitFullscreenIfActive();
+    }
+
+    /**
+     * Pauses game sound and plays main menu sound if sound is on.
+     * @private
+     */
+    function handleSoundOnMenuReturn() {
+        if (soundOn) {
+            gameSound.pause();
+            mainMenuSound.play();
+        }
+    }
+
+    /**
+     * Exits fullscreen mode if currently in fullscreen.
+     * @private
+     */
+    function exitFullscreenIfActive() {
+        if (document.fullscreenElement || document.mozFullScreenElement ||
+            document.webkitFullscreenElement || document.msFullscreenElement) {
+            exitFullscreen();
         }
     }
 

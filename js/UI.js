@@ -12,7 +12,7 @@ export class UI {
         this.fontFamily = 'Luckiest Guy';
         this.buttons = {
             exit: { x: 0, y: 0, width: 150, height: 50 },
-            restart: { x: 0, y: 0, width: 150, height: 50 }
+            restart: { x: 0, y: 0, width: 200, height: 50 }
         };
         this.addEventListeners();
     }
