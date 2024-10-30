@@ -21,8 +21,8 @@ export class Endboss {
         this.frameY = 0;
         this.maxFrame = 0;
         this.speed = 2;
-        this.health = 1000;
-        this.maxHealth = 1000;
+        this.health = 500;
+        this.maxHealth = 500;
         this.fps = 15;
         this.frameInterval = 1000 / this.fps;
         this.frameTimer = 0;

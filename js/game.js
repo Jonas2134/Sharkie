@@ -42,7 +42,7 @@ export class Game {
         this.enemies = [];
         this.smokes = [];
         this.enemyTimer = 0;
-        this.enemyInterval = 500;
+        this.enemyInterval = 2000;
         this.debug = false;
         this.score = 0;
         this.fontColor = 'black';
