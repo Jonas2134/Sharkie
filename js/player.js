@@ -86,11 +86,10 @@ export class Player {
      * @param {number} deltaTime - The time since the last frame.
      */
     updateAnimation(deltaTime) {
+        this.frameTimer += deltaTime;
         if (this.frameTimer > this.frameInterval) {
-            this.frameTimer = 0;
             this.frameX = this.frameX < this.maxFrame ? this.frameX + 1 : 0;
-        } else {
-            this.frameTimer += deltaTime;
+            this.frameTimer = 0;
         }
     }
 

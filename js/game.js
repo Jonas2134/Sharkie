@@ -42,7 +42,7 @@ export class Game {
         this.enemies = [];
         this.smokes = [];
         this.enemyTimer = 0;
-        this.enemyInterval = 2000;
+        this.enemyInterval = 1000;
         this.debug = false;
         this.score = 0;
         this.fontColor = 'black';
@@ -109,10 +109,11 @@ export class Game {
     updateEntities(deltaTime) {
         if (!this.endboss) {
             this.background.update();
+            this.enemyTimer += deltaTime;
             if (this.enemyTimer > this.enemyInterval) {
-                this.addEnemy();
                 this.enemyTimer = 0;
-            } else this.enemyTimer += deltaTime;
+                this.addEnemy();
+            }
         }
     }
     

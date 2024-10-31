@@ -21,8 +21,8 @@ export class Endboss {
         this.frameY = 0;
         this.maxFrame = 0;
         this.speed = 2;
-        this.health = 500;
-        this.maxHealth = 500;
+        this.health = 700;
+        this.maxHealth = 700;
         this.fps = 15;
         this.frameInterval = 1000 / this.fps;
         this.frameTimer = 0;
@@ -95,11 +95,10 @@ export class Endboss {
      * @param {number} deltaTime - The time passed since the last update in milliseconds.
      */
     updateAnimation(deltaTime) {
+        this.frameTimer += deltaTime;
         if (this.frameTimer > this.frameInterval) {
-            this.frameTimer = 0;
             this.frameX = this.frameX < this.maxFrame ? this.frameX + 1 : 0;
-        } else {
-            this.frameTimer += deltaTime;
+            this.frameTimer = 0;
         }
     }
 

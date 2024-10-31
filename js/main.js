@@ -59,9 +59,8 @@ function resizeCanvas() {
  * Displays a message if the device is in portrait mode on mobile.
  */
 function checkOrientation() {
-    const isPortrait = window.innerHeight > window.innerWidth;
-    const largeTabletWidth = 1024;
-    if (isMobileDevice() || (isTabletDevice() && window.innerWidth <= largeTabletWidth)) {
+    const isPortrait = window.innerHeight > window.innerWidth;    
+    if (isMobileDevice() || isTabletDevice()) {
         if (isPortrait) rotateMessage.classList.remove('d-none');
         else rotateMessage.classList.add('d-none');
     } else rotateMessage.classList.add('d-none');
