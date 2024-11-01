@@ -32,10 +32,10 @@ export class Smoke {
     update(deltaTime) {
         this.x -= this.game.speed;
         this.frameTimer += deltaTime;
-        if (this.frameTimer > this.frameInterval) {
-            this.frameTimer = 0;
+        if (this.frameTimer >= this.frameInterval) {
             if (this.frameX < this.maxFrame) this.frameX++;
             else this.markedForDeletion = true;
+            this.frameTimer -= this.frameInterval;
         }
     }
 

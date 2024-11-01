@@ -126,6 +126,7 @@ function handleAudio() {
  * @param {number} timeStamp - The current time in milliseconds.
  */
 function gameLoop(timeStamp) {
+    if (lastTime === 0) lastTime = timeStamp;
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -140,11 +141,8 @@ function gameLoop(timeStamp) {
  */
 function handleGameReset() {
     if (canvas.classList.contains('d-none') && game && game.gameOver) {
-        if (game.gameReset) {
-            resetAndInitializeGame();
-        } else {
-            resetToMainMenu();
-        }
+        if (game.gameReset) resetAndInitializeGame();
+        else resetToMainMenu();
     }
 }
 
@@ -153,9 +151,10 @@ function handleGameReset() {
  * @private
  */
 function resetAndInitializeGame() {
+    lastTime = 0;
     game.resetGame();
     initializeGame();
-    gameLoop(0);
+    requestAnimationFrame(gameLoop);
     canvas.classList.remove("d-none");
 }
 
@@ -227,7 +226,7 @@ startBtn.addEventListener('click', function () {
     initializeGame();
     setupDisplay();
     if (soundOn) handleAudio();
-    gameLoop(0);
+    requestAnimationFrame(gameLoop);
 });
 
 /**

@@ -87,9 +87,9 @@ export class Player {
      */
     updateAnimation(deltaTime) {
         this.frameTimer += deltaTime;
-        if (this.frameTimer > this.frameInterval) {
+        if (this.frameTimer >= this.frameInterval) {
             this.frameX = this.frameX < this.maxFrame ? this.frameX + 1 : 0;
-            this.frameTimer = 0;
+            this.frameTimer -= this.frameInterval;
         }
     }
 
