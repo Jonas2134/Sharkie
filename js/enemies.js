@@ -18,13 +18,16 @@ class Enemy {
 
     /**
      * Updates the enemy's state based on the time elapsed since the last update.
-     * @param {number} deltaTime - The time elapsed since the last update.
+     * This includes updating the enemy's position, handling player speed interactions,
+     * checking for deletion, and updating the enemy's animation frame.
+     * @function update
+     * @param {number} interval - Time interval since the last update, used to manage enemy state and animations.
      */
-    update(deltaTime) {
+    update(interval) {
         this.updatePosition();
         this.handlePlayerSpeed();
         this.checkDeletion();
-        this.updateAnimation(deltaTime);
+        this.updateAnimation(interval);
     }
 
     /**
@@ -57,11 +60,13 @@ class Enemy {
     }
 
     /**
-     * Updates the enemy's animation frame based on the elapsed time.
-     * @param {number} deltaTime - The time elapsed since the last update.
+     * Updates the enemy's animation frame based on the elapsed time interval.
+     * Advances to the next animation frame when the accumulated time exceeds the frame interval.
+     * @function updateAnimation
+     * @param {number} interval - Time interval since the last update, used to control animation timing.
      */
-    updateAnimation(deltaTime) {
-        this.frameTimer += deltaTime;
+    updateAnimation(interval) {
+        this.frameTimer += interval;
         if (this.frameTimer >= this.frameInterval) {
             this.frameX = (this.frameX < this.maxFrame) ? this.frameX + 1 : 0;
             this.frameTimer -= this.frameInterval;

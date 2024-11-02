@@ -22,7 +22,7 @@ export class Game {
         this.height = height;
         this.soundOn = soundOn;
         this.mobile = false;
-        this.resetGame();
+        this.resetValues();
         this.player.currentState = this.player.states[0];
         this.player.currentState.enter();
         this.gameReset = false;
@@ -31,7 +31,7 @@ export class Game {
     /**
      * Resets game properties to initial values, setting up entities and timers.
      */
-    resetGame() {
+    resetValues() {
         this.speed = 0;
         this.maxSpeed = 6;
         this.background = new Background(this);
@@ -72,19 +72,21 @@ export class Game {
     }
 
     /**
-     * Updates the game state based on time delta, including entities, player, and enemies.
-     * @param {number} deltaTime - Time elapsed since the last update.
+     * Updates the game state, managing various entities, player, enemies, and effects.
+     * This method processes game logic if the game is not over.
+     * @function update
+     * @param {number} interval - Time interval since the last update, used to adjust movements and actions.
      */
-    update(deltaTime) {
+    update(interval) {
         if (!this.gameOver) {
             this.updateTime();
             this.checkEndboss();
-            this.updateEntities(deltaTime);
-            this.updatePlayer(deltaTime);
+            this.updateEntities(interval);
+            this.updatePlayer(interval);
             this.updateBubbles();
-            this.updateEnemies(deltaTime);
-            this.updateSmokes(deltaTime);
-            if (this.endboss) this.updateEndboss(deltaTime);
+            this.updateEnemies(interval);
+            this.updateSmokes(interval);
+            if (this.endboss) this.updateEndboss(interval);
         }
     }
     
@@ -103,13 +105,15 @@ export class Game {
     }
     
     /**
-     * Updates background and spawns enemies if conditions are met.
-     * @param {number} deltaTime - Time elapsed since the last update.
+     * Updates the background and handles enemy spawning based on timing conditions.
+     * Background is updated and enemies are spawned at set intervals unless the end boss is active.
+     * @function updateEntities
+     * @param {number} interval - Time interval since the last update, used to manage enemy spawn timing.
      */
-    updateEntities(deltaTime) {
+    updateEntities(interval) {
         if (!this.endboss) {
             this.background.update();
-            this.enemyTimer += deltaTime;
+            this.enemyTimer += interval;
             if (this.enemyTimer > this.enemyInterval) {
                 this.enemyTimer = 0;
                 this.addEnemy();
@@ -118,11 +122,13 @@ export class Game {
     }
     
     /**
-     * Updates the player's position and actions based on input.
-     * @param {number} deltaTime - Time elapsed since the last update.
+     * Updates the player's position and actions according to user input.
+     * Processes player movement and interactions using the provided time interval.
+     * @function updatePlayer
+     * @param {number} interval - Time interval since the last update, used to adjust player movement and actions.
      */
-    updatePlayer(deltaTime) {
-        this.player.update(this.input, deltaTime);
+    updatePlayer(interval) {
+        this.player.update(this.input, interval);
     }
     
     /**
@@ -134,29 +140,35 @@ export class Game {
     }
     
     /**
-     * Updates the enemies in the game and removes any marked for deletion.
-     * @param {number} deltaTime - Time elapsed since the last update.
+     * Updates all active enemies in the game and removes those marked for deletion.
+     * Each enemy is updated based on the provided time interval, and enemies flagged for removal are filtered out.
+     * @function updateEnemies
+     * @param {number} interval - Time interval since the last update, used to adjust enemy movement and actions.
      */
-    updateEnemies(deltaTime) {
-        this.enemies.forEach(enemy => enemy.update(deltaTime));
+    updateEnemies(interval) {
+        this.enemies.forEach(enemy => enemy.update(interval));
         this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion);
     }
     
     /**
-     * Updates smoke effects and removes any marked for deletion.
-     * @param {number} deltaTime - Time elapsed since the last update.
+     * Updates all smoke effects in the game and removes those marked for deletion.
+     * Each smoke effect is updated based on the provided time interval, and expired effects are filtered out.
+     * @function updateSmokes
+     * @param {number} interval - Time interval since the last update, used to adjust smoke effect animations.
      */
-    updateSmokes(deltaTime) {
-        this.smokes.forEach(smoke => smoke.update(deltaTime));
+    updateSmokes(interval) {
+        this.smokes.forEach(smoke => smoke.update(interval));
         this.smokes = this.smokes.filter(smoke => !smoke.markedForDeletion);
     }
     
     /**
-     * Updates the end boss if present.
-     * @param {number} deltaTime - Time elapsed since the last update.
+     * Updates the end boss state and actions if it is present in the game.
+     * Applies the provided time interval to adjust the end boss's movements and behaviors.
+     * @function updateEndboss
+     * @param {number} interval - Time interval since the last update, used to control end boss updates.
      */
-    updateEndboss(deltaTime) {
-        this.endboss.update(deltaTime);
+    updateEndboss(interval) {
+        this.endboss.update(interval);
     }
 
     /**

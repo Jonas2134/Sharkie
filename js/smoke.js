@@ -26,12 +26,15 @@ export class Smoke {
     }
 
     /**
-     * Updates the smoke animation frame and position.
-     * @param {number} deltaTime - The time elapsed since the last update, in milliseconds.
+     * Updates the smoke animation frame and position based on the elapsed time.
+     * Moves the smoke to the left at the game's speed and manages the animation frame.
+     * If the maximum frame is reached, the smoke is marked for deletion.
+     * @function update
+     * @param {number} interval - Time elapsed since the last update in milliseconds, used to control animation timing and movement.
      */
-    update(deltaTime) {
+    update(interval) {
         this.x -= this.game.speed;
-        this.frameTimer += deltaTime;
+        this.frameTimer += interval;
         if (this.frameTimer >= this.frameInterval) {
             if (this.frameX < this.maxFrame) this.frameX++;
             else this.markedForDeletion = true;

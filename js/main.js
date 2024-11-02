@@ -22,12 +22,16 @@ gameStartSound.volume = 0.3;
 canvas.width = 720;
 canvas.height = 480;
 
+let gameInterval;
+
 mainMenuSound.loop = true;
 gameSound.loop = true;
 
 let soundOn = false;
 let game = null;
-let lastTime = 0;
+
+const gamefps = 60;
+const intervalDuration = 1000 / gamefps;
 
 /**
  * Checks if the device is a mobile device.
@@ -59,7 +63,7 @@ function resizeCanvas() {
  * Displays a message if the device is in portrait mode on mobile.
  */
 function checkOrientation() {
-    const isPortrait = window.innerHeight > window.innerWidth;    
+    const isPortrait = window.innerHeight > window.innerWidth;
     if (isMobileDevice() || isTabletDevice()) {
         if (isPortrait) rotateMessage.classList.remove('d-none');
         else rotateMessage.classList.add('d-none');
@@ -122,18 +126,32 @@ function handleAudio() {
 }
 
 /**
- * The main game loop, which updates and draws the game state on each frame.
- * @param {number} timeStamp - The current time in milliseconds.
+ * Initiates the main game loop, updating and drawing the game state at each interval.
+ * Clears the canvas, checks for mobile or tablet devices, updates, and redraws the game elements.
+ * @function gameLoop
  */
-function gameLoop(timeStamp) {
-    if (lastTime === 0) lastTime = timeStamp;
-    const deltaTime = timeStamp - lastTime;
-    lastTime = timeStamp;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.isMobile = isMobileDevice() || isTabletDevice();
-    game.update(deltaTime);
-    game.draw(ctx);
-    if (!game.gameOver) requestAnimationFrame(gameLoop);
+function gameLoop() {
+    if (!gameInterval) {
+        gameInterval = setInterval(() => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            game.isMobile = isMobileDevice() || isTabletDevice();
+            game.update(intervalDuration);
+            game.draw(ctx);
+        }, intervalDuration);
+    }
+}
+
+/**
+ * Stops the game by clearing the active game interval.
+ * If a game interval is running, it is cleared and set to null,
+ * effectively pausing the game loop.
+ * @function stopGame
+ */
+function stopGame() {
+    if (gameInterval) {
+        clearInterval(gameInterval);
+        gameInterval = null;
+    }
 }
 
 /**
@@ -151,10 +169,10 @@ function handleGameReset() {
  * @private
  */
 function resetAndInitializeGame() {
-    lastTime = 0;
-    game.resetGame();
+    stopGame();
+    game.resetValues();
     initializeGame();
-    requestAnimationFrame(gameLoop);
+    gameLoop();
     canvas.classList.remove("d-none");
 }
 
@@ -163,8 +181,9 @@ function resetAndInitializeGame() {
  * @private
  */
 function resetToMainMenu() {
+    stopGame();
     menu.classList.remove("d-none");
-    game.resetGame();
+    game.resetValues();
     handleSoundOnMenuReturn();
     exitFullscreenIfActive();
 }
@@ -226,7 +245,7 @@ startBtn.addEventListener('click', function () {
     initializeGame();
     setupDisplay();
     if (soundOn) handleAudio();
-    requestAnimationFrame(gameLoop);
+    gameLoop();
 });
 
 /**

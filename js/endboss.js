@@ -41,10 +41,13 @@ export class Endboss {
     }
 
     /**
-     * Updates the end boss's position and state based on the game state.
-     * @param {number} deltaTime - The time passed since the last update in milliseconds.
+     * Updates the end boss's position and state based on the current game state.
+     * This includes updating the hitbox, handling input, determining movement,
+     * updating invincibility status, and managing the animation frame.
+     * @function update
+     * @param {number} interval - Time elapsed since the last update in milliseconds, used to adjust movement and animations.
      */
-    update(deltaTime) {
+    update(interval) {
         this.updateHitbox();
         this.currentState.handleInput();
         if (this.shouldMove()) {
@@ -52,7 +55,7 @@ export class Endboss {
             this.move();
         }
         this.updateInvincibility();
-        this.updateAnimation(deltaTime);
+        this.updateAnimation(interval);
     }
     
     /**
@@ -91,11 +94,13 @@ export class Endboss {
     }
     
     /**
-     * Updates the animation frame of the end boss based on the time passed.
-     * @param {number} deltaTime - The time passed since the last update in milliseconds.
+     * Updates the animation frame of the end boss based on the elapsed time.
+     * Advances to the next animation frame when the accumulated time exceeds the frame interval.
+     * @function updateAnimation
+     * @param {number} interval - Time elapsed since the last update in milliseconds, used to control animation timing.
      */
-    updateAnimation(deltaTime) {
-        this.frameTimer += deltaTime;
+    updateAnimation(interval) {
+        this.frameTimer += interval;
         if (this.frameTimer >= this.frameInterval) {
             this.frameX = this.frameX < this.maxFrame ? this.frameX + 1 : 0;
             this.frameTimer -= this.frameInterval;

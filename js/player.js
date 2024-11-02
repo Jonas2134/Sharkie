@@ -40,15 +40,15 @@ export class Player {
     /**
      * Updates the player's state, movement, boundaries, and animation.
      * @param {object} input - Input from the player.
-     * @param {number} deltaTime - The time since the last frame.
+     * @param {number} interval - The time since the last frame.
      */
-    update(input, deltaTime) {
+    update(input, interval) {
         this.checkCollision();
         this.currentState.handleInput(input);
         if (this.currentState === this.states[5]) this.y += 1;
         else this.handleMovement(input);
         this.handleBoundaries();
-        this.updateAnimation(deltaTime);
+        this.updateAnimation(interval);
     }
 
     /**
@@ -82,11 +82,13 @@ export class Player {
     }
 
     /**
-     * Updates the player's animation frame based on time interval.
-     * @param {number} deltaTime - The time since the last frame.
+     * Updates the player's animation frame based on the elapsed time interval.
+     * Advances to the next animation frame when the accumulated time exceeds the frame interval.
+     * @function updateAnimation
+     * @param {number} interval - Time interval since the last frame, used to control animation timing.
      */
-    updateAnimation(deltaTime) {
-        this.frameTimer += deltaTime;
+    updateAnimation(interval) {
+        this.frameTimer += interval;
         if (this.frameTimer >= this.frameInterval) {
             this.frameX = this.frameX < this.maxFrame ? this.frameX + 1 : 0;
             this.frameTimer -= this.frameInterval;
