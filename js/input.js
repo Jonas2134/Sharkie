@@ -22,7 +22,7 @@ export class InputHandler {
             e.preventDefault();
             if (e.repeat) return;
             this.keys[e.code] = true;
-            if (e.code === "KeyE") setTimeout(() => this.keys[e.code] = false, 300);
+            if (e.code === "KeyE" || e.code === "Space") setTimeout(() => this.keys[e.code] = false, 200);
             if (e.code === "KeyT") this.game.debug = !this.game.debug;
         });
 

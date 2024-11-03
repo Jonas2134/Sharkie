@@ -97,9 +97,9 @@ export class UI {
         const healthRatio = Math.max(0, health / maxHealth);
         const borderRadius = 10;
     
-        this.drawRoundedRect(ctx, x, y, barWidth, barHeight, borderRadius, 'black', true);
-        this.drawRoundedRect(ctx, x, y, barWidth, barHeight, borderRadius, 'red', false);
-        if (healthRatio > 0) this.drawRoundedRect(ctx, x, y, barWidth * healthRatio, barHeight, borderRadius, 'green', false);
+        this.drawRoundedRect(ctx, x, y, barWidth, barHeight, borderRadius, '#333333', true);
+        this.drawRoundedRect(ctx, x, y, barWidth, barHeight, borderRadius, '#D86B6B', false);
+        if (healthRatio > 0) this.drawRoundedRect(ctx, x, y, barWidth * healthRatio, barHeight, borderRadius, '#43A047', false);
     }
 
     /**
